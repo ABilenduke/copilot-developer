@@ -86,14 +86,14 @@ Curated bundles of prompts, instructions, and chat modes you can import all at o
 
 ### Featured Starting Points
 
-- **[![Copilot Prompts](https://img.shields.io/badge/Copilot-Prompts-228B22?style=for-the-badge&logo=githubcopilot&logoColor=white)](prompts/README.md)** – Focused, task-specific prompts for generating code, documentation, and solving specific problems.
-- **[![Copilot Instructions](https://img.shields.io/badge/Copilot-Instructions-00BFA6?style=for-the-badge&logo=githubcopilot&logoColor=white)](instructions/README.md)** – Comprehensive coding standards and best practices that apply to specific file patterns or entire projects.
-- **[![Copilot Chat Modes](https://img.shields.io/badge/Copilot-Chat%20Modes-FFB400?style=for-the-badge&logo=githubcopilot&logoColor=white)](chatmodes/README.md)** – Specialized AI personas and conversation modes for different roles and contexts.
-- **[![Copilot Toolkits](https://img.shields.io/badge/Copilot-Toolkits-FF6FA5?style=for-the-badge&logo=githubcopilot&logoColor=white)](toolkits/README.md)** – Curated toolkits of related prompts, instructions, and chat modes organized around specific themes and workflows.
+- **[![Copilot Prompts](https://img.shields.io/badge/Copilot-Prompts-228B22?style=for-the-badge&logo=githubcopilot&logoColor=white)](README.prompts.md)** – Focused, task-specific prompts for generating code, documentation, and solving specific problems.
+- **[![Copilot Instructions](https://img.shields.io/badge/Copilot-Instructions-00BFA6?style=for-the-badge&logo=githubcopilot&logoColor=white)](README.instructions.md)** – Comprehensive coding standards and best practices that apply to specific file patterns or entire projects.
+- **[![Copilot Chat Modes](https://img.shields.io/badge/Copilot-Chat%20Modes-FFB400?style=for-the-badge&logo=githubcopilot&logoColor=white)](README.chatmodes.md)** – Specialized AI personas and conversation modes for different roles and contexts.
+- **[![Copilot Toolkits](https://img.shields.io/badge/Copilot-Toolkits-FF6FA5?style=for-the-badge&logo=githubcopilot&logoColor=white)](README.toolkits.md)** – Curated toolkits of related prompts, instructions, and chat modes organized around specific themes and workflows.
 
 Need inspiration?
 
-- Browse `prompts/README.md`, `instructions/README.md`, and `chatmodes/README.md` for curated highlights as the catalog expands.
+- Browse `README.prompts.md`, `README.instructions.md`, and `README.chatmodes.md` for curated highlights as the catalog expands.
 - Check the `toolkits/` directory for ready-to-use bundles when onboarding new teammates.
 - Run `npm run toolkit-validate` to confirm toolkit manifests stay in sync after edits.
 
