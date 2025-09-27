@@ -1,0 +1,53 @@
+{
+  "name": "copilot-developer",
+  "version": "1.0.0",
+  "description": "A curated list of developer friendly, production ready instructions, chatmodes, prompts and toolkits for mastering GitHub Copilot.",
+  "author": "Andrew Bilenduke (https://github.com/abilenduke)",
+  "license": "MIT",
+  "homepage": "https://github.com/abilenduke/copilot-developer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abilenduke/copilot-developer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abilenduke/copilot-developer/issues"
+  },
+  "keywords": [
+    "github",
+    "github-copilot",
+    "copilot",
+    "copilot-prompts",
+    "prompt-engineering",
+    "instructions",
+    "chatmodes",
+    "mcp",
+    "toolkits",
+    "ai-assistant",
+    "developer-resources",
+    "developer-tools",
+    "programming-tools",
+    "code-generation",
+    "awesome-list",
+    "curated-list",
+    "software-development",
+    "awesome"
+  ],
+  "scripts": {
+    "readme-update": "node scripts/readme-update.js",
+    "toolkit-validate": "node scripts/toolkit-validate.js",
+    "toolkit-create": "node scripts/toolkit-create.js",
+    "lint": "eslint .",
+    "lint:fix": "npm run lint -- --fix",
+    "format": "prettier --check .",
+    "format:write": "prettier --write ."
+  },
+  "dependencies": {
+    "all-contributors-cli": "^6.26.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "prettier": "^3.2.5"
+  }
+}

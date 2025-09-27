@@ -1,0 +1,42 @@
+name: Verify no CRLF Line Endings in Markdown Files
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check-line-endings:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Validate Line Endings in Markdown Files
+        run: |
+          echo "Scanning for CRLF (Windows-style) line endings..."
+
+          # Find all markdown files containing CRLF and store the list in a variable.
+          # This is more efficient as it only runs the expensive command once.
+          files_with_crlf=$(grep -l $'\r' $(find . -type f -name "*.md"))
+
+          # Check if the variable is empty.
+          if [ -z "$files_with_crlf" ]; then
+            # If it's empty, no files were found, which is the success case.
+            echo "✅ Success: All Markdown files use LF (Unix-style) line endings."
+            exit 0
+          else
+            # If it's not empty, files were found, which is the failure case.
+            echo "❌ Error: CRLF line endings detected in the following files:"
+            echo "------------------------------------------------------------------"
+            # Use GitHub Actions' error formatting to highlight the files in the logs.
+            echo "$files_with_crlf" | sed 's/^/::error::/'
+            echo "------------------------------------------------------------------"
+            echo "This causes issues with many Git tools and diffs."
+            echo "Please configure your text editor to use LF line endings or run a conversion tool to fix them."
+            exit 1
+          fi
