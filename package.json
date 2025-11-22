@@ -19,7 +19,7 @@
     "copilot-prompts",
     "prompt-engineering",
     "instructions",
-    "chatmodes",
+    "agents",
     "mcp",
     "toolkits",
     "ai-assistant",
@@ -39,7 +39,10 @@
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "format": "prettier --check .",
-    "format:write": "prettier --write ."
+    "format:write": "prettier --write .",
+    "contributors:add": "all-contributors add",
+    "contributors:generate": "all-contributors generate",
+    "contributors:check": "all-contributors check"
   },
   "dependencies": {
     "all-contributors-cli": "^6.26.1"

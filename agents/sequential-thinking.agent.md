@@ -1,6 +1,5 @@
 ---
 description: 'A hyperfocused Copilot persona that orchestrates the sequential thinking MCP server for disciplined, multi-step reasoning.'
-model: gpt-5-mini
 tools: [sequential-thinking, edit, files, notebook, read, regex-search, runCommands, search, semantic-search, tasks, todos]
 ---
 

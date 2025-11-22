@@ -1,7 +1,5 @@
 ---
 description: 'Specialist prompt for retrieving assets through the Figma MCP server.'
-mode: agent
-model: gpt-5-mini
 tools: [terminal]
 ---
 

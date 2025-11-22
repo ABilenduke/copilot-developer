@@ -1,7 +1,5 @@
 ---
 description: 'A guided prompt that helps teams capture thorough Architecture Decision Records with clear rationale.'
-mode: ask
-model: gpt-5-mini
 ---
 
 # Architecture Decision Record Generator

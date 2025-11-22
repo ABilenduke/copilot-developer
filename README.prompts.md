@@ -16,7 +16,7 @@ Browse the directories in this repository that are organized by theme (e.g., `to
 
 Inside each toolkit directory, you will find a combination of:
 
-* **Chat Modes (`.chatmode.md`)**: To set the expert persona (e.g., a "React Expert").
+* **Agents (`.agent.md`)**: To set the expert persona (e.g., a "React Expert").
 * **Prompts (`.prompt.md`)**: To execute specific tasks (e.g., "Convert class component to functional component").
 * **Instructions (`.instructions.md`)**: To enforce standards and best practices (e.g., "Follow the Rules of Hooks").
 
@@ -25,14 +25,14 @@ Inside each toolkit directory, you will find a combination of:
 Choose the components from the toolkit that fit your needs and install them individually using the standard, file-based installation procedures.
 
 * **[See installation guide for Prompts](./#reusable-prompts-for-copilot-chat)**
-* **[See installation guide for Chat Modes](./#custom-github-copilot-chat-modes)**
-* **[See installation guide for Instructions](./#custom-instructions-for-github-copilot)**
+* **[See installation guide for Agents](./#custom-github-copilot-agents)**
+* **[See installation guide for Instructions](./#custom-instructions-for-copilot)**
 
 ### Example Workflow: The "React Refactoring" Toolkit
 
 Imagine a toolkit for refactoring React applications. It might contain:
 
-1. A `react-expert.chatmode.md` file.
+1. A `react-expert.agent.md` file.
 2. A `componentize-jsx.prompt.md` file.
 3. A `react-best-practices.instructions.md` file.
 
@@ -67,12 +67,12 @@ Follow these steps to install prompts for use in a compatible editor like VS Cod
 Once installed, there are several ways to execute a prompt in the Copilot Chat view:
 
 * **Slash Command**: Type "/" followed by the prompt's filename (without the extension). For example, to run `review-code.prompt.md`, you would type `/review-code`.
-* **Command Palette**: Open the VS Code Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`) and run the `Chat: Run Prompt...` command, then select your desired prompt.
+* **Command Palette**: Open the VS Code Command Palette (`Ctrl+Shift-P` or `Cmd-Shift-P`) and run the `Chat: Run Prompt...` command, then select your desired prompt.
 * **Editor Button**: With a `.prompt.md` file open in your editor, click the "Run" button that appears at the top.
 
 ### Example Workflow: Combining with a Chat Mode
 
-1. **Activate Chat Mode**: In the Copilot Chat view, select a specialized chat mode, such as `Security Analyst`.
+1. **Activate Agent**: In the Copilot Chat view, select a specialized agent, such as `Security Analyst`.
 2. **Execute Prompt**: Run the `/check-for-vulnerabilities` prompt.
 
 By doing this, you instruct the **Security Analyst** persona to perform the vulnerability check, resulting in a more thorough and expert-level analysis than if you had run the prompt in the default mode. (See <attachments> above for file contents. You may not need to search or read the file again.)

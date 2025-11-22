@@ -102,7 +102,7 @@ async function createToolkitTemplate() {
     }
 
     // Get description
-    const defaultDescription = `A toolkit of related prompts, instructions, and chat modes for ${toolkitName.toLowerCase()}.`;
+    const defaultDescription = `A toolkit of related prompts, instructions, and agents for ${toolkitName.toLowerCase()}.`;
     let description = await prompt(`Description (default: ${defaultDescription}): `);
     if (!description.trim()) {
       description = defaultDescription;
@@ -138,8 +138,8 @@ items:
   #   kind: prompt
   # - path: instructions/example.instructions.md
   #   kind: instruction
-  # - path: chatmodes/example.chatmode.md
-  #   kind: chat-mode
+  # - path: agents/example.agent.md
+  #   kind: agent
 display:
   ordering: alpha # or "manual" to preserve the order above
   show_badge: false # set to true to show toolkit badge on items

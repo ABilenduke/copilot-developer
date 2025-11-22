@@ -1,7 +1,5 @@
 ---
 description: 'A Laravel-first chat mode that ships production-ready updates via the Laravel Boost MCP server.'
-mode: agent
-model: gpt-5-mini
 tools: [search, semantic-search, regex-search, read, files, edit, runCommands, tasks, todos, laravelBoost]
 ---
 

@@ -1,7 +1,5 @@
 ---
 description: 'A Figma-native design partner that orchestrates workflows via the Figma MCP server.'
-mode: agent
-model: gpt-5-mini
 tools: [figma, search, semantic-search, read, files, edit, runCommands, tasks, todos]
 ---
 

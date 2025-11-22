@@ -1,7 +1,5 @@
 ---
 description: 'Dedicated debugging companion for Playwright MCP server issues.'
-mode: agent
-model: gpt-5-mini
 tools: [terminal]
 ---
 
