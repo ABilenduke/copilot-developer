@@ -684,9 +684,41 @@ function buildCategoryReadme(sectionBuilder, dirPath, headerLine, usageLine) {
   return `${headerLine}\n\n${usageLine}\n\n_No entries found yet._\n`;
 }
 
+// Update contributors badge in README.md
+function updateContributorsBadge() {
+  const configPath = path.join(repoRoot, ".all-contributorsrc");
+  const readmePath = path.join(repoRoot, "README.md");
+
+  if (!fs.existsSync(configPath) || !fs.existsSync(readmePath)) {
+    console.log("Skipping contributors badge update: config or README missing");
+    return;
+  }
+
+  try {
+    const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+    const count = config.contributors ? config.contributors.length : 0;
+
+    let readmeContent = fs.readFileSync(readmePath, "utf8");
+    const badgeRegex = /badge\/all_contributors-\d+-/;
+    const newBadge = `badge/all_contributors-${count}-`;
+
+    if (readmeContent.match(badgeRegex)) {
+      const updatedContent = readmeContent.replace(badgeRegex, newBadge);
+      writeFileIfChanged(readmePath, updatedContent);
+    } else {
+      console.log("Contributors badge not found in README.md");
+    }
+  } catch (error) {
+    console.error(`Error updating contributors badge: ${error.message}`);
+  }
+}
+
 // Main execution
 try {
   console.log("Generating category README files...");
+
+  // Update contributors badge first
+  updateContributorsBadge();
 
   const instructionsDir = path.join(repoRoot, "instructions");
   const promptsDir = path.join(repoRoot, "prompts");
