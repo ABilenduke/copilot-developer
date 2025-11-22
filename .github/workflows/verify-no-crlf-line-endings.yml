@@ -22,7 +22,7 @@ jobs:
 
           # Find all markdown files containing CRLF and store the list in a variable.
           # This is more efficient as it only runs the expensive command once.
-          files_with_crlf=$(grep -l $'\r' $(find . -type f -name "*.md"))
+          files_with_crlf=$(grep -l $'\r' $(find . -type f -name "*.md") || true)
 
           # Check if the variable is empty.
           if [ -z "$files_with_crlf" ]; then
