@@ -1,7 +1,5 @@
 ---
 description: 'A refactoring-first chat mode that modernizes code safely and incrementally.'
-mode: agent
-model: gpt-5-mini
 tools: [search, semantic-search, regex-search, read, files, edit, runCommands, tasks, todos]
 ---
 

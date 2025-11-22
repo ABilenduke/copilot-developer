@@ -82,7 +82,7 @@ Browse the directories in this repository that are organized by theme (e.g., \`t
 
 Inside each toolkit directory, you will find a combination of:
 
-* **Chat Modes (\`.chatmode.md\`)**: To set the expert persona (e.g., a "React Expert").
+* **Agents (\`.agent.md\`)**: To set the expert persona (e.g., a "React Expert").
 * **Prompts (\`.prompt.md\`)**: To execute specific tasks (e.g., "Convert class component to functional component").
 * **Instructions (\`.instructions.md\`)**: To enforce standards and best practices (e.g., "Follow the Rules of Hooks").
 
@@ -91,14 +91,14 @@ Inside each toolkit directory, you will find a combination of:
 Choose the components from the toolkit that fit your needs and install them individually using the standard, file-based installation procedures.
 
 * **[See installation guide for Prompts](./#reusable-prompts-for-copilot-chat)**
-* **[See installation guide for Chat Modes](./#custom-github-copilot-chat-modes)**
-* **[See installation guide for Instructions](./#custom-instructions-for-github-copilot)**
+* **[See installation guide for Agents](./#custom-github-copilot-agents)**
+* **[See installation guide for Instructions](./#custom-instructions-for-copilot)**
 
 ### Example Workflow: The "React Refactoring" Toolkit
 
 Imagine a toolkit for refactoring React applications. It might contain:
 
-1. A \`react-expert.chatmode.md\` file.
+1. A \`react-expert.agent.md\` file.
 2. A \`componentize-jsx.prompt.md\` file.
 3. A \`react-best-practices.instructions.md\` file.
 
@@ -133,29 +133,29 @@ Follow these steps to install prompts for use in a compatible editor like VS Cod
 Once installed, there are several ways to execute a prompt in the Copilot Chat view:
 
 * **Slash Command**: Type "/" followed by the prompt's filename (without the extension). For example, to run \`review-code.prompt.md\`, you would type \`/review-code\`.
-* **Command Palette**: Open the VS Code Command Palette (\`Ctrl+Shift+P\` or \`Cmd+Shift+P\`) and run the \`Chat: Run Prompt...\` command, then select your desired prompt.
+* **Command Palette**: Open the VS Code Command Palette (\`Ctrl+Shift-P\` or \`Cmd-Shift-P\`) and run the \`Chat: Run Prompt...\` command, then select your desired prompt.
 * **Editor Button**: With a \`.prompt.md\` file open in your editor, click the "Run" button that appears at the top.
 
 ### Example Workflow: Combining with a Chat Mode
 
-1. **Activate Chat Mode**: In the Copilot Chat view, select a specialized chat mode, such as \`Security Analyst\`.
+1. **Activate Agent**: In the Copilot Chat view, select a specialized agent, such as \`Security Analyst\`.
 2. **Execute Prompt**: Run the \`/check-for-vulnerabilities\` prompt.
 
 By doing this, you instruct the **Security Analyst** persona to perform the vulnerability check, resulting in a more thorough and expert-level analysis than if you had run the prompt in the default mode. (See <attachments> above for file contents. You may not need to search or read the file again.)`,
 
-  chatmodesSection: `## Custom GitHub Copilot Chat Modes
+  agentsSection: `## Custom GitHub Copilot Agents
 
-Custom Chat Modes transform GitHub Copilot into a specialized expert for your specific needs. By defining a unique persona, tailored behaviors, and access to custom tools, these modes provide focused, context-aware assistance for any development workflow.
+Custom Agents transform GitHub Copilot into a specialized expert for your specific needs. By defining a unique persona, tailored behaviors, and access to custom tools, these agents provide focused, context-aware assistance for any development workflow.
 
-Some advanced chat modes are designed to connect to **Managed Copilot Personalities (MCP) servers**, which provide enhanced, server-side capabilities. Please check the documentation for each chat mode to see if an MCP server is required.`,
+Some advanced agents are designed to connect to **Managed Copilot Personalities (MCP) servers**, which provide enhanced, server-side capabilities. Please check the documentation for each agent to see if an MCP server is required.`,
 
-  chatmodesUsage: `## How to Use Custom Chat Modes
+  agentsUsage: `## How to Use Custom Agents
 
-Follow these steps to install and activate a custom chat mode in a compatible editor like VS Code.
+Follow these steps to install and activate a custom agent in a compatible editor like VS Code.
 
-### 1. Prerequisites (For MCP-Enabled Modes)
+### 1. Prerequisites (For MCP-Enabled Agents)
 
-If the chat mode you wish to use requires a specific MCP server, you must first configure your IDE to connect to it. This is a mandatory step for these modes to function correctly.
+If the agent you wish to use requires a specific MCP server, you must first configure your IDE to connect to it. This is a mandatory step for these agents to function correctly.
 
 You can typically do this in one of two ways:
 
@@ -164,38 +164,38 @@ You can typically do this in one of two ways:
 
 ### 2. Installation
 
-1. **Download the File**: From this repository, download the \`.chatmode.md\` file you wish to install.
+1. **Download the File**: From this repository, download the \`.agent.md\` file you wish to install.
 2. **Place the File**: Move the downloaded file into one of the following directories. Your editor will automatically detect it.
-    * **For a specific project**: Place it in your project's \`.github/copilot/chatmodes/\` directory.
+    * **For a specific project**: Place it in your project's \`.github/copilot/agents/\` directory.
 
       \`\`\`bash
       your-project/
       └── .github/
           └── copilot/
-              └── chatmodes/
-                  └── my-custom-mode.chatmode.md
+              └── agents/
+                  └── my-custom-agent.agent.md
       \`\`\`
 
-    * **For global use (all projects)**: Place it in your user-level configuration directory (e.g., \`~/.github/copilot/chatmodes/\` on macOS/Linux).
+    * **For global use (all projects)**: Place it in your user-level configuration directory (e.g., \`~/.github/copilot/agents/\` on macOS/Linux).
 
 ### 3. Activation and Usage
 
 1. **Open Copilot Chat**: In your editor, open the GitHub Copilot Chat view.
-2. **Select the Mode**: Click on the chat mode selector (it may say "Default" or show another active mode).
-3. **Choose Your Mode**: Select your newly installed chat mode from the dropdown list.
+2. **Select the Agent**: Click on the agent selector (it may say "Default" or show another active agent).
+3. **Choose Your Agent**: Select your newly installed agent from the dropdown list.
 
 Once selected, Copilot will adopt the persona and capabilities defined in the file, ready to assist you with your specialized tasks.`,
 
   toolkitsSection: `## Toolkits
 
-Curated collections of related prompts, instructions, and chat modes organized around specific themes, workflows, or use cases.`,
+Curated collections of related prompts, instructions, and agents organized around specific themes, workflows, or use cases.`,
 
   toolkitsUsage: `## How to Use Toolkits
 
 **Browse Toolkits:**
 
 - Explore themed toolkits that group related customizations
-- Each toolkit includes prompts, instructions, and chat modes for specific workflows
+- Each toolkit includes prompts, instructions, and agents for specific workflows
 - Toolkits make it easy to adopt comprehensive setups for particular scenarios
 
 **Install Items:**
@@ -257,7 +257,7 @@ function extractTitle(filePath) {
       // Step 2: For prompt/chatmode/instructions files, look for heading after frontmatter
       if (
         filePath.includes(".prompt.md") ||
-        filePath.includes(".chatmode.md") ||
+        filePath.includes(".agent.md") ||
         filePath.includes(".instructions.md")
       ) {
         for (const line of lines) {
@@ -275,13 +275,13 @@ function extractTitle(filePath) {
           }
         }
 
-        // Step 3: Format filename for prompt/chatmode/instructions files if no heading found
+        // Step 3: Format filename for prompt/agent/instructions files if no heading found
         const basename = path.basename(
           filePath,
           filePath.includes(".prompt.md")
             ? ".prompt.md"
-            : filePath.includes(".chatmode.md")
-              ? ".chatmode.md"
+            : filePath.includes(".agent.md")
+              ? ".agent.md"
               : ".instructions.md"
         );
         return basename.replace(/[-_]/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
@@ -397,7 +397,7 @@ const repoBaseUrl = "https://raw.githubusercontent.com/abilenduke/copilot-develo
 const AKA_INSTALL_URLS = {
   instructions: "https://aka.ms/copilot-developer/install/instructions",
   prompt: "https://aka.ms/copilot-developer/install/prompt",
-  mode: "https://aka.ms/copilot-developer/install/chatmode",
+  agent: "https://aka.ms/copilot-developer/install/agent",
 };
 
 function makeBadges(link, type) {
@@ -506,47 +506,47 @@ function generatePromptsSection(promptsDir) {
 /**
  * Generate the chat modes section with a table of all chat modes
  */
-function generateChatModesSection(chatmodesDir) {
-  // Check if chatmodes directory exists
-  if (!fs.existsSync(chatmodesDir)) {
-    console.log("Chat modes directory does not exist");
+function generateAgentsSection(agentsDir) {
+  // Check if agents directory exists
+  if (!fs.existsSync(agentsDir)) {
+    console.log("Agents directory does not exist");
     return "";
   }
 
-  // Get all chat mode files
-  const chatmodeFiles = fs
-    .readdirSync(chatmodesDir)
-    .filter((file) => file.endsWith(".chatmode.md"))
+  // Get all agent files
+  const agentFiles = fs
+    .readdirSync(agentsDir)
+    .filter((file) => file.endsWith(".agent.md"))
     .sort();
 
-  console.log(`Found ${chatmodeFiles.length} chat mode files`);
+  console.log(`Found ${agentFiles.length} agent files`);
 
-  // If no chat modes, return empty string
-  if (chatmodeFiles.length === 0) {
+  // If no agents, return empty string
+  if (agentFiles.length === 0) {
     return "";
   }
 
   // Create table header
-  let chatmodesContent = "| Title | Install | Description |\n| ----- | ------- | ----------- |\n";
+  let agentsContent = "| Title | Install | Description |\n| ----- | ------- | ----------- |\n";
 
-  // Generate table rows for each chat mode file
-  for (const file of chatmodeFiles) {
-    const filePath = path.join(chatmodesDir, file);
+  // Generate table rows for each agent file
+  for (const file of agentFiles) {
+    const filePath = path.join(agentsDir, file);
     const title = extractTitle(filePath);
-    const link = encodeURI(`chatmodes/${file}`);
+    const link = encodeURI(`agents/${file}`);
 
     // Check if there's a description in the frontmatter
     const customDescription = extractDescription(filePath);
 
     // Create badges for installation links
-    const badges = makeBadges(link, "mode");
+    const badges = makeBadges(link, "agent");
 
     const description = customDescription && customDescription !== "null" ? customDescription : "";
 
-    chatmodesContent += `| [${title}](${link}) | ${badges} | ${description} |\n`;
+    agentsContent += `| [${title}](${link}) | ${badges} | ${description} |\n`;
   }
 
-  return `${TEMPLATES.chatmodesSection}\n\n${TEMPLATES.chatmodesUsage}\n\n${chatmodesContent}`;
+  return `${TEMPLATES.agentsSection}\n\n${TEMPLATES.agentsUsage}\n\n${agentsContent}`;
 }
 
 /**
@@ -636,8 +636,8 @@ function generateToolkitReadme(toolkit, toolkitId) {
     const title = extractTitle(filePath);
     const description = extractDescription(filePath) || "No description";
     const typeDisplay =
-      item.kind === "chat-mode"
-        ? "Chat Mode"
+      item.kind === "agent"
+        ? "Agent"
         : item.kind === "instruction"
           ? "Instruction"
           : "Prompt";
@@ -646,7 +646,7 @@ function generateToolkitReadme(toolkit, toolkitId) {
     // Create install badges for each item
     const badges = makeBadges(
       item.path,
-      item.kind === "instruction" ? "instructions" : item.kind === "chat-mode" ? "mode" : "prompt"
+      item.kind === "instruction" ? "instructions" : item.kind === "agent" ? "agent" : "prompt"
     );
 
     content += `| [${title}](${link}) | ${badges} | ${typeDisplay} | ${description} |\n`;
@@ -690,13 +690,13 @@ try {
 
   const instructionsDir = path.join(repoRoot, "instructions");
   const promptsDir = path.join(repoRoot, "prompts");
-  const chatmodesDir = path.join(repoRoot, "chatmodes");
+  const agentsDir = path.join(repoRoot, "agents");
   const toolkitsDir = path.join(repoRoot, "toolkits");
 
   // Compose headers for standalone files by converting section headers to H1
   const instructionsHeader = TEMPLATES.instructionsSection.replace(/^##\s/m, "# ");
   const promptsHeader = TEMPLATES.promptsSection.replace(/^##\s/m, "# ");
-  const chatmodesHeader = TEMPLATES.chatmodesSection.replace(/^##\s/m, "# ");
+  const agentsHeader = TEMPLATES.agentsSection.replace(/^##\s/m, "# ");
   const toolkitsHeader = TEMPLATES.toolkitsSection.replace(/^##\s/m, "# ");
 
   const instructionsReadme = buildCategoryReadme(
@@ -711,11 +711,11 @@ try {
     promptsHeader,
     TEMPLATES.promptsUsage
   );
-  const chatmodesReadme = buildCategoryReadme(
-    generateChatModesSection,
-    chatmodesDir,
-    chatmodesHeader,
-    TEMPLATES.chatmodesUsage
+  const agentsReadme = buildCategoryReadme(
+    generateAgentsSection,
+    agentsDir,
+    agentsHeader,
+    TEMPLATES.agentsUsage
   );
 
   // Generate toolkits README
@@ -729,7 +729,7 @@ try {
   // Write category outputs to root-level README files
   writeFileIfChanged(path.join(repoRoot, "README.instructions.md"), instructionsReadme);
   writeFileIfChanged(path.join(repoRoot, "README.prompts.md"), promptsReadme);
-  writeFileIfChanged(path.join(repoRoot, "README.chatmodes.md"), chatmodesReadme);
+  writeFileIfChanged(path.join(repoRoot, "README.agents.md"), agentsReadme);
   writeFileIfChanged(path.join(repoRoot, "README.toolkits.md"), toolkitsReadme);
 
   // Generate individual toolkit README files

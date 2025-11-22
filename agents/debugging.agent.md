@@ -1,7 +1,5 @@
 ---
 description: 'A diagnostic-first chat mode that hunts down defects systematically.'
-mode: agent
-model: gpt-5-mini
 tools: [search, semantic-search, regex-search, read, files, edit, runCommands, tasks, todos]
 ---
 

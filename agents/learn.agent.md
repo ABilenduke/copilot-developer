@@ -1,7 +1,5 @@
 ---
 description: 'A learning-first chat mode that converts curiosity into durable, shareable expertise.'
-mode: agent
-model: gpt-5-mini
 tools: [search, semantic-search, regex-search, read, files, edit, runCommands, tasks, todos]
 ---
 

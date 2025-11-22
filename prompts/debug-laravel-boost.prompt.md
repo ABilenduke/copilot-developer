@@ -1,7 +1,5 @@
 ---
 description: 'Expert debugging companion for Laravel Boost issues.'
-mode: agent
-model: gpt-5-mini
 tools: [terminal]
 ---
 

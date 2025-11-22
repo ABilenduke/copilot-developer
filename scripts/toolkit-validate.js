@@ -87,8 +87,8 @@ function validateToolkitItems(items) {
     if (!item.kind || typeof item.kind !== "string") {
       return `Item ${i + 1} must have a kind string`;
     }
-    if (!["prompt", "instruction", "chat-mode"].includes(item.kind)) {
-      return `Item ${i + 1} kind must be one of: prompt, instruction, chat-mode`;
+    if (!["prompt", "instruction", "agent"].includes(item.kind)) {
+      return `Item ${i + 1} kind must be one of: prompt, instruction, agent`;
     }
 
     // Validate file path exists
@@ -104,8 +104,8 @@ function validateToolkitItems(items) {
     if (item.kind === "instruction" && !item.path.endsWith(".instructions.md")) {
       return `Item ${i + 1} kind is "instruction" but path doesn't end with .instructions.md`;
     }
-    if (item.kind === "chat-mode" && !item.path.endsWith(".chatmode.md")) {
-      return `Item ${i + 1} kind is "chat-mode" but path doesn't end with .chatmode.md`;
+    if (item.kind === "agent" && !item.path.endsWith(".agent.md")) {
+      return `Item ${i + 1} kind is "agent" but path doesn't end with .agent.md`;
     }
   }
   return null;

@@ -1,7 +1,5 @@
 ---
 description: 'A senior software engineer persona that designs and ships production-quality solutions with rigor.'
-mode: agent
-model: gpt-5-mini
 tools: [search, semantic-search, regex-search, read, files, edit, runCommands, tasks, todos]
 ---
 

@@ -1,7 +1,5 @@
 ---
 description: 'A Playwright-first chat mode that drives resilient E2E coverage with MCP automation.'
-mode: agent
-model: gpt-5-mini
 tools: [search, semantic-search, read, files, edit, runCommands, tasks, todos, playwright]
 ---
 

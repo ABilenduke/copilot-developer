@@ -1,7 +1,5 @@
 ---
 description: 'A planning-first chat mode that converts ambiguous goals into actionable, risk-aware roadmaps.'
-mode: agent
-model: gpt-5-mini
 tools: [search, semantic-search, regex-search, read, files, edit, runCommands, tasks, todos]
 ---
 
