@@ -3,7 +3,7 @@
 [![GitHub license](https://img.shields.io/github/license/abilenduke/copilot-developer)](./LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/abilenduke/copilot-developer?style=social)](https://github.com/abilenduke/copilot-developer/stargazers)
 [![GitHub last commit](https://img.shields.io/github/last-commit/abilenduke/copilot-developer)](https://github.com/abilenduke/copilot-developer/commits/main)
-[![All Contributors](https://img.shields.io/badge/all_contributors-86-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-0-orange.svg?style=flat-square)](#contributors-)
 
 A curated list of high-quality instructions, agents, prompts, and toolkits for mastering GitHub Copilot.
 
