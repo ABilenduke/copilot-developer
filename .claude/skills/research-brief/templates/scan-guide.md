@@ -60,7 +60,7 @@ Scan only what's relevant to the feature being researched. Use the feature descr
 
 ## Pattern Exemplar Selection
 
-The exemplar is the most architecturally similar existing feature. It gives Gemini a concrete "build it like this" reference.
+The exemplar is the most architecturally similar existing feature. It gives the research tool a concrete "build it like this" reference.
 
 ### How to Choose
 
@@ -99,7 +99,7 @@ Scan the exemplar's **key files** — the ones that demonstrate the pattern:
 
 ### Inline as Code (Structural Contracts)
 
-These define the **shape** of the system. Gemini needs to see them exactly to give compatible recommendations.
+These define the **shape** of the system. The research tool needs to see them exactly to give compatible recommendations.
 
 - Model class: `protected $fillable`, `protected $casts` / `casts()`, relationship methods, trait usage, key scopes
 - Migration schema: `Schema::create()` block with all columns, indexes, foreign keys
@@ -112,7 +112,7 @@ These define the **shape** of the system. Gemini needs to see them exactly to gi
 
 ### Summarize (Behavioral Implementation)
 
-These describe **how things work**. Gemini needs the flow, not the code.
+These describe **how things work**. The research tool needs the flow, not the code.
 
 | What | Summarize As |
 |---|---|

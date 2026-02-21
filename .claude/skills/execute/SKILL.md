@@ -68,16 +68,26 @@ After implementing each plan step, run a quick verification loop. The goal is **
 Implement step
      │
      ▼
-Run quick checks:          ◄──────┐
-  • Tests related to step         │
-  • Lint changed files            │
-  • Step-specific validation      │
-     │                            │
-  Pass? ─── Yes ──► Commit        │
-     │                            │
-     No                           │
-     │                            │
-  iteration < 5? ─ Yes ─► Fix ───┘
+Run quick checks:          ◄──────────────┐
+  • Tests related to step                  │
+  • Lint changed files                     │
+  • Step-specific validation               │
+     │                                     │
+  Pass? ─── No ──► iteration < 5? ─ Yes ─►│ Fix
+     │                    │                │
+     Yes                  No               │
+     │                    │                │
+     ▼               Commit with           │
+  Evaluate work:    notes, move on         │
+  • Re-read plan step                      │
+  • Compare implementation                 │
+  • Check test coverage                    │
+     │                                     │
+  Gaps found? ─── No ──► Commit            │
+     │                                     │
+     Yes                                   │
+     │                                     │
+  iteration < 5? ─── Yes ─► Fix ──────────┘
      │
      No
      │
@@ -91,7 +101,19 @@ Run quick checks:          ◄──────┐
 - If a step modifies a controller, lint that file and run its route tests
 - Do NOT run the full test suite — that's for the final loop
 
-**Max 5 iterations.** After 5, commit with notes and move on.
+**After checks pass, evaluate the work:**
+
+Passing tests are necessary but not sufficient. Before committing, do a quick evaluation:
+
+1. **Re-read the plan step** — what was it supposed to accomplish?
+2. **Compare implementation to plan** — is anything missing, partially done, or deviated without justification?
+3. **Evaluate test quality** — do the tests actually assert meaningful behavior, or are they shallow? Did you test what the step requires, or just what was easy to test? Are there obvious scenarios the tests don't cover?
+4. **If gaps are found** — fix them (implementation or tests), re-run checks, and re-evaluate. This counts toward the 5-iteration limit.
+5. **If no gaps** — commit and move on.
+
+This prevents the "green bar illusion" where tests pass but the work is incomplete or the tests themselves are weak.
+
+**Max 5 iterations** (checks + evaluations combined). After 5, commit with notes and move on.
 
 ---
 
@@ -238,9 +260,11 @@ For each step in the plan's implementation roadmap:
 ### After the Step — Per-Step Ralph Loop
 
 6. Run relevant tests + lint on changed files
-7. If pass: journal clean result, commit
-8. If fail: journal, fix, re-run (max 5 iterations)
-9. Record commit hash
+7. If fail: journal, fix, re-run
+8. If pass: **evaluate the work** — re-read the plan step, compare what was implemented vs. what was required, check that tests actually cover the step's requirements (not just the happy path or easy scenarios)
+9. If evaluation finds gaps: fix implementation or tests, re-run checks, re-evaluate (max 5 total iterations)
+10. If evaluation is clean: journal result, commit
+11. Record commit hash
 
 ### Between Steps
 
@@ -301,7 +325,7 @@ Branch: feature/{feature}/{change} | Last commit: {hash}
 
 ## Critical Rules
 
-1. **Run per-step ralph loop after EVERY step.** Fast checks, no excuses.
+1. **Run per-step ralph loop after EVERY step.** Fast checks + work evaluation, no excuses. Passing tests alone is NOT a green light — evaluate the work against the plan step before committing.
 2. **The final ralph loop ALWAYS runs all 3 phases.** Even if automated checks pass, self-review and adversarial testing still run. This is the whole point.
 3. **Max 5 total iterations in the final loop.** 3 mandatory phases + up to 2 fix-and-verify rounds.
 4. **Adversarial testing means WRITING TESTS.** Not just thinking about edge cases — write actual test cases and run them.

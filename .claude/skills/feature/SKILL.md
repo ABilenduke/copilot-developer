@@ -122,4 +122,43 @@ That's it. Move fast.
 
 After any change to the feature catalog, regenerate `docs/features/index.md` by reading all feature READMEs and compiling them. Use the template at `templates/index.md`.
 
+The index groups features by domain and tracks iteration counts:
+
+<code-snippet name="Feature Index Entry" lang="markdown">
+## Business Domain
+
+| Feature | Description | Iterations |
+|---------|-------------|------------|
+| [article-publishing](article-publishing/) | Core content lifecycle — CRUD, status workflow, revisions, SEO metadata | 1 — [Block-Based Content Architecture](article-publishing/iterations/2026-02-14_block-based-content-architecture/plan.md) |
+| [newsletter](newsletter/) | Double opt-in email subscriber system with verification and unsubscribe | 0 |
+</code-snippet>
+
+---
+
+## Feature README Format
+
+Feature READMEs are intentionally minimal — two sections, no technical details:
+
+<code-snippet name="Feature README" lang="markdown">
+# Broadcasting
+
+## What is it?
+
+Real-time communication layer using Laravel Reverb as the WebSocket server and Laravel Echo on the frontend. Runs as a dedicated Docker service with nginx proxying, and exposes Vue composables for channel subscriptions.
+
+## Why does it exist?
+
+Enables real-time features (notifications, live content updates, collaborative signals) without polling. The foundation for any future feature that needs instant feedback.
+</code-snippet>
+
+---
+
+## Common Pitfalls
+
+- **Over-documenting in READMEs**: Feature READMEs are "what" and "why" only — never "how". Technical details, file lists, and architecture go in iteration plans created by `/plan`. READMEs that include implementation details become stale within days.
+- **Forgetting to update the index**: Every add, remove, or rename must update `docs/features/index.md`. The index is the entry point — a feature without an index entry is invisible to `/plan` and `/execute`.
+- **Feature granularity mismatch**: A feature should be one cohesive capability. "Admin" is too broad (it contains dashboard, articles, categories, tags, media — each is a separate feature). "Article slug generation" is too narrow (it's part of article-publishing). If two things always change together, they're one feature.
+- **Missing iterations directory**: The `iterations/` directory is created by `/plan`, not `/feature`. But the feature directory must exist before `/plan` can create iterations inside it. If `/plan` says the feature doesn't exist, run `/feature` first.
+- **Wrong domain grouping in index**: Features are grouped by domain (Business, Platform, Infrastructure). A feature in the wrong domain confuses navigation. Auth is Platform (not Infrastructure). Newsletter is Business (not Platform). Broadcasting is Infrastructure (not Platform).
+
 $ARGUMENTS

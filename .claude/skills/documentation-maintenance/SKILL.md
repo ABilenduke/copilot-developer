@@ -26,7 +26,7 @@ This table shows which skills, docs, and agents relate to each code area. The ho
 |---|---|---|---|
 | `app/Models/{Article,Category,Tag,ArticleInternalLink,ArticleRevision,KeywordRanking}.php`, `app/Enums/{ArticleStatus,ContentType}.php` | `content-publishing` | `docs/architecture.md`, `docs/generated/schema.md` | `content-manager` |
 | `app/Http/Controllers/{Article,Category}Controller*` | `content-publishing` | `docs/generated/routes.md` | `content-manager` |
-| `app/Ai/Agents/*.php` | `content-publishing` | `docs/architecture.md` | `campaign-orchestrator`, `content-manager` |
+| `app/Ai/Agents/*.php`, `app/Ai/AgentResolver.php`, `app/Ai/Agents/Concerns/*.php` | `ai-agent-patterns` | `docs/architecture.md` | `campaign-orchestrator`, `content-manager` |
 | `resources/js/composables/useArticleAiChat.ts` | `content-publishing`, `inertia-vue-development` | `docs/architecture.md` | `frontend-developer` |
 | `app/Models/{Campaign,CampaignTopic}*` | `content-publishing` | `docs/generated/schema.md` | `campaign-orchestrator` |
 | `app/Models/{AffiliateLink,AffiliateClick,AffiliateProgram,AffiliateConversion,AdPlacement}*`, `app/Enums/{CommissionType,ConversionStatus}.php` | `affiliate-tracking` | `docs/generated/schema.md` | `monetization-specialist` |

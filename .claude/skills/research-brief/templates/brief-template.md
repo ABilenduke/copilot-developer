@@ -8,7 +8,7 @@
 
 ## 1. Constraints & Non-Negotiables
 
-These constraints are absolute. All research recommendations MUST comply with them.
+These constraints are absolute. All research recommendations MUST comply with them. Do not suggest alternatives to these choices.
 
 ### Stack Constraints
 
@@ -214,8 +214,8 @@ Answer each objective considering the constraints in Section 1, the existing arc
 
 ---
 
-## Suggested Gemini Prompt
+## Suggested Research Prompt
 
-Paste this brief into Gemini Deep Research with the following prompt:
+Paste this brief into your preferred AI deep research tool (Gemini Deep Research, Perplexity, ChatGPT, etc.) with the following prompt:
 
 > Based on this project research brief, conduct deep research on implementing {feature description}. The brief contains our exact stack, constraints, existing architecture, and a pattern exemplar showing how we build similar features. Organize your findings by the numbered research objectives in Section 5. For each objective, provide specific recommendations that comply with our constraints and build on our existing patterns. Include code examples where helpful, using our stack (Laravel 12, Vue 3, Inertia.js v2, Pest v4, shadcn-vue).

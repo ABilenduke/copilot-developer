@@ -2,11 +2,12 @@
 name: research-brief
 description: >-
   Scans the codebase and produces a structured research brief optimized for
-  Gemini Deep Research. Gathers stack context, architectural patterns, relevant
-  code excerpts, and a pattern exemplar, then frames research objectives that
-  map to the plan skill's expected sections. Activates when the user says
-  "research brief", "/research-brief", "I want to research", "prepare a brief
-  for", or wants to research how to build a feature before planning it.
+  AI deep research tools (Gemini, Perplexity, ChatGPT, etc.). Gathers stack
+  context, architectural patterns, relevant code excerpts, and a pattern
+  exemplar, then frames research objectives that map to the plan skill's
+  expected sections. Activates when the user says "research brief",
+  "/research-brief", "I want to research", "prepare a brief for", or wants
+  to research how to build a feature before planning it.
 ---
 
 # Research Brief Generator
@@ -17,7 +18,7 @@ These rules are absolute. No exceptions.
 
 ### Rule 1: NEVER do research yourself
 
-You are a **context packager**, not a researcher. Your job is to scan the codebase, gather facts, and frame questions. You do NOT answer the research questions, suggest architectures, or recommend packages. Gemini does that. You provide the raw material.
+You are a **context packager**, not a researcher. Your job is to scan the codebase, gather facts, and frame questions. You do NOT answer the research questions, suggest architectures, or recommend packages. The external AI research tool does that. You provide the raw material.
 
 ### Rule 2: NEVER fabricate codebase details
 
@@ -42,17 +43,17 @@ This is the core content rule for the brief:
 
 ### Rule 4: Constraints go FIRST in the brief
 
-The brief is read top-to-bottom by Gemini. Constraints and non-negotiables must appear before research objectives so Gemini internalizes your boundaries before forming answers.
+The brief is read top-to-bottom by the research tool. Constraints and non-negotiables must appear before research objectives so the AI internalizes your boundaries before forming answers.
 
 ---
 
 ## Purpose
 
-This skill bridges Claude Code and Gemini Deep Research. Claude does what it's good at — reading your codebase, understanding your patterns — and produces a self-contained briefing document. Gemini does what it's good at — deep web research — but grounded in your actual stack, architecture, and constraints instead of giving generic advice.
+This skill bridges Claude Code and external AI deep research tools (Gemini Deep Research, Perplexity, ChatGPT, etc.). Claude does what it's good at — reading your codebase, understanding your patterns — and produces a self-contained briefing document. The research tool does what it's good at — deep web research — but grounded in your actual stack, architecture, and constraints instead of giving generic advice.
 
 The output feeds into the `/plan` skill. Research objectives are structured to produce answers that map directly to the plan template's sections (Technical Architecture, File-Level Plan, Edge Cases).
 
-**Pipeline position**: `/research-brief` → Gemini (manual) → `/feature` → `/plan` → `/execute`
+**Pipeline position**: `/research-brief` → AI research tool (manual) → `/feature` → `/plan` → `/execute`
 
 ---
 
@@ -116,7 +117,7 @@ Follow the scan guide in `templates/scan-guide.md`. Two tiers:
 **Pattern exemplar scan** (the differentiator):
 - Identify the most architecturally similar existing feature
 - Scan its key files deeply — the service, the job chain, the controller, the Vue page
-- This gives Gemini a concrete "build it like this" reference, not just abstract conventions
+- This gives the research tool a concrete "build it like this" reference, not just abstract conventions
 
 **Technique**: Use the Explore agent or direct Glob/Grep/Read for the always-tier. Use judgment for the selective tier — if building notifications, scan broadcasting config, event classes, Reverb setup, but don't scan affiliate tracking code.
 
@@ -128,13 +129,13 @@ Follow the scan guide in `templates/scan-guide.md`. Two tiers:
 
 Follow `templates/brief-template.md` for the output structure. The five sections, in this order:
 
-1. **Constraints & Non-Negotiables** — Stack rules Gemini must respect (Docker, Pest, pnpm, Inertia, existing packages before new ones). Plus feature-specific constraints.
+1. **Constraints & Non-Negotiables** — Stack rules the research tool must respect (Docker, Pest, pnpm, Inertia, existing packages before new ones). Plus feature-specific constraints.
 2. **Project Context** — Stack versions, key config, directory conventions, architectural patterns.
 3. **Current Architecture Snapshot** — Inline structural contracts for the relevant domain. Models with relationships/casts, migrations, routes, TS interfaces.
 4. **Pattern Exemplar** — One deeply-scanned similar feature showing "this is how we already do things." Key files inlined.
-5. **Research Objectives** — Numbered questions for Gemini, each mapped to a plan template section (Technical Architecture, File-Level Plan, Edge Cases). Each question references constraints and the exemplar: "Given [constraint X] and [exemplar pattern Y], research how to..."
+5. **Research Objectives** — Numbered questions for the research tool, each mapped to a plan template section (Technical Architecture, File-Level Plan, Edge Cases). Each question references constraints and the exemplar: "Given [constraint X] and [exemplar pattern Y], research how to..."
 
-**Target length**: 800-1500 lines. Long enough to be self-contained, short enough for Gemini's Deep Research context.
+**Target length**: 800-1500 lines. Long enough to be self-contained, short enough to fit within typical AI research tool context windows.
 
 **Output**: Complete draft brief.
 
@@ -146,13 +147,13 @@ Present a summary of what was captured:
 - Stack context highlights
 - Which models/services/components were scanned
 - Which feature was chosen as the pattern exemplar and why
-- The research objectives (the questions Gemini will answer)
+- The research objectives (the questions the research tool will answer)
 
 Ask: "Anything missing, or any research questions you want to add or reshape?"
 
 After user confirms, write to `docs/research-briefs/{feature-name}-research-brief.md`.
 
-Tell the user: "Brief saved. Paste it into Gemini Deep Research. When you get results back, run `/feature` to catalog the feature, then `/plan` to build the implementation plan informed by the research."
+Tell the user: "Brief saved. Paste it into your preferred AI deep research tool (Gemini Deep Research, Perplexity, ChatGPT, etc.). When you get results back, run `/feature` to catalog the feature, then `/plan` to build the implementation plan informed by the research."
 
 ---
 
@@ -169,7 +170,7 @@ Start EVERY response with:
 
 ## Research Objectives: Mapping to Plan Sections
 
-The research objectives are the most important part of the brief. They shape what Gemini produces. Each objective should map to a plan template section:
+The research objectives are the most important part of the brief. They shape what the research tool produces. Each objective should map to a plan template section:
 
 | Plan Section | Research Objective Category | Example Question |
 |---|---|---|
@@ -196,7 +197,7 @@ Before finalizing the brief:
 - [ ] Research objectives reference specific constraints and exemplar patterns
 - [ ] Each research objective maps to a plan template section
 - [ ] No actual `.env` values included (only `.env.example` structure)
-- [ ] Brief is self-contained — Gemini needs zero codebase access to understand it
+- [ ] Brief is self-contained — the research tool needs zero codebase access to understand it
 - [ ] Target length is 800-1500 lines
 
 ---
@@ -214,7 +215,7 @@ Before finalizing the brief:
 Once the brief is saved:
 
 1. Tell the user the file path
-2. Remind them of the pipeline: "Paste into Gemini Deep Research → `/feature` to catalog → `/plan` to build the implementation plan"
-3. Suggest: "When pasting into Gemini, use a prompt like: 'Based on this project brief, conduct deep research on [feature]. Organize your findings by the research objectives listed at the end.'"
+2. Remind them of the pipeline: "Paste into your AI deep research tool → `/feature` to catalog → `/plan` to build the implementation plan"
+3. Suggest: "When pasting into your research tool, use a prompt like: 'Based on this project brief, conduct deep research on [feature]. Organize your findings by the research objectives listed at the end.'"
 
 $ARGUMENTS
