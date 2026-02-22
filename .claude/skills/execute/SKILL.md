@@ -1,6 +1,13 @@
 ---
 name: execute
-description: Execute an existing plan step-by-step on a dedicated git branch, with fast ralph loops per step and a deep final ralph loop that includes self-review and adversarial testing. Writes a timestamped journal with commit hashes and loop results. Use when the user wants to implement a plan, says "execute the plan", "start building", "implement this", or references a plan.md file to work from.
+description: >-
+  Execute an existing plan step-by-step on a dedicated git branch, with fast
+  ralph loops per step and a deep final ralph loop that includes self-review and
+  adversarial testing. Writes a timestamped journal with commit hashes and loop
+  results. Supports both new multi-file story format (plan.md + design.md +
+  prd.md) and old monolithic iteration format. Use when the user wants to
+  implement a plan, says "execute the plan", "start building", "implement this",
+  or references a plan.md file to work from.
 ---
 
 # Plan Executor Skill
@@ -24,17 +31,101 @@ When this skill is invoked:
     - If the user specified a path, use that
     - If not, check `docs/features/` for available plans. Show what exists and ask which to execute.
     - If no plans exist, tell the user to run `/plan` first.
-4. Read the plan thoroughly. Understand every step AND every acceptance criterion.
-5. **Identify verification stack**: Examine the project to determine what's available:
+4. **Detect format** (see Format Detection below)
+5. **Run the Definition of Ready gate** (see Definition of Ready below)
+6. Read all available story documents thoroughly. Understand every step AND every acceptance criterion.
+7. **Identify verification stack**: Examine the project to determine what's available:
     - Test runner (e.g. `php artisan test`, `npm test`, `pytest`)
     - Linter (e.g. `phpstan`, `eslint`, `pint`, `ruff`)
     - Type checker (e.g. `vue-tsc`, `tsc --noEmit`, `mypy`)
     - Any custom checks mentioned in the plan
     - Record these in the journal header as the **verification stack**
-6. **Set up the git branch** (see Git Workflow below)
-7. Create the journal file alongside the plan
-8. Write the journal header
-9. Begin executing Step 1
+8. **Set up the git branch** (see Git Workflow below)
+9. **Update GitHub ticket status** (new format only — see GitHub Integration below)
+10. Create the journal file alongside the plan
+11. Write the journal header (including "Documents available" status)
+12. Begin executing Step 1
+
+---
+
+## Format Detection
+
+Detect whether this is the new multi-file story format or the old monolithic iteration format:
+
+```
+if plan.md path contains "/stories/" → NEW FORMAT
+  → multi-file consumption (plan.md + design.md + prd.md + brief.md)
+  → update feature README on completion
+  → create PR via gh pr create
+  → update GitHub ticket status throughout
+
+elif plan.md path contains "/iterations/" → OLD FORMAT
+  → monolithic parsing (sections 1-7 in one file)
+  → write journal.md only
+  → do NOT update README, create PR, or touch GitHub
+
+else → UNKNOWN
+  → ask the user which format to use
+```
+
+Record the detected format in the journal header.
+
+---
+
+## Definition of Ready Gate
+
+Before execution begins, validate that the inputs are sufficient. This prevents starting with incomplete planning artifacts.
+
+### New Format (stories/)
+
+| Document | Check | Enforcement |
+|----------|-------|-------------|
+| `plan.md` | Has `## Implementation Roadmap` with at least one `### Step` | **Hard requirement** — refuse to execute without steps |
+| `design.md` | Has `## File Manifest` section | **Hard requirement** — can't verify completeness without knowing all files |
+| `prd.md` | Has `## Acceptance Criteria` section | **Soft requirement** — warn but proceed. Ralph loop AC verification will be limited |
+| `brief.md` | Exists | **Optional** — note in journal if missing. Business context only, not needed for execution |
+
+**Validation sequence:**
+
+1. Locate story directory from plan.md path
+2. Check plan.md for Implementation Roadmap with steps → HARD
+3. Check for design.md with File Manifest → HARD
+4. Check for prd.md with Acceptance Criteria → SOFT (warn, continue)
+5. Check for brief.md → OPTIONAL (note, continue)
+6. Record "Documents available: brief ✅|⬜ | prd ✅|⬜ | design ✅|⬜ | plan ✅" in journal header
+
+If a hard requirement fails, tell the user what's missing and suggest they run `/plan` to create it.
+
+### Old Format (iterations/)
+
+| Document | Check | Enforcement |
+|----------|-------|-------------|
+| `plan.md` | Has implementation steps (Section 7 or similar) | **Hard requirement** |
+
+Old format has everything in one file — no multi-file validation needed.
+
+---
+
+## Document Consumption Model
+
+### New Format
+
+```
+/execute reads:
+  1. plan.md    → Implementation roadmap (steps, order, dependencies) — PRIMARY
+  2. design.md  → File manifest, data model, integration points — REFERENCE
+  3. prd.md     → Acceptance criteria for ralph loop verification — REFERENCE
+  4. brief.md   → Business context (for understanding intent) — OPTIONAL
+```
+
+**Cross-referencing during execution:**
+- plan.md steps reference design.md file manifest entries by path
+- Ralph loop AC verification cross-checks against prd.md Given/When/Then criteria
+- Journal records which documents informed each step
+
+### Old Format
+
+Read plan.md as a monolithic document. Parse sections 1-7 from the single file.
 
 ---
 
@@ -51,12 +142,86 @@ When this skill is invoked:
 
 ### Committing
 
-- **After each step** (post ralph loop): `step {N}: {task name}`
-- **If ralph fixed issues**: `step {N}: {task name} (verified after {X} ralph iterations)`
-- **Final ralph fixes**: `ralph review: {description}` or `ralph adversarial: {description}`
-- **Final commit**: `complete: {change-name} - add execution journal`
+Every commit message must include the **story name** so commits are self-describing in `git log`:
+
+- **After each step** (post ralph loop): `{story-name} step {N}: {task name}`
+- **If ralph fixed issues**: `{story-name} step {N}: {task name} (verified after {X} ralph iterations)`
+- **Final ralph fixes**: `{story-name} ralph review: {description}` or `{story-name} ralph adversarial: {description}`
+- **Final commit**: `{story-name}: complete - add execution journal`
+
+Example: `add-oauth2 step 3: create token refresh job`
 
 Always record the hash (`git rev-parse --short HEAD`) in the journal.
+
+---
+
+## GitHub Integration (New Format Only)
+
+Skip all GitHub operations for old-format iterations.
+
+### At Execution Start
+
+If the plan.md header contains a `**Ticket**: #{number}`, update the ticket:
+
+```bash
+# Assign to yourself and comment that work is starting
+~/.local/bin/gh issue edit {ticket-number} \
+  --repo ABilenduke/content-engine \
+  --add-assignee @me
+
+~/.local/bin/gh issue comment {ticket-number} \
+  --repo ABilenduke/content-engine \
+  --body "Execution started. Branch: feature/{feature}/{change}"
+```
+
+Note: Status is tracked via the **project board columns** (Backlog → Ready → In Progress → Review → Done), not via labels. Move the ticket on the board manually or via project field updates if needed.
+
+### During Execution (per step)
+
+```bash
+# When a step's sub-issue is being worked on, optionally comment progress:
+~/.local/bin/gh issue comment {sub-issue-number} \
+  --repo ABilenduke/content-engine \
+  --body "Working on Step {N}. Branch: feature/{feature}/{change}"
+```
+
+### At Execution Completion
+
+```bash
+# Create PR with detailed summary
+~/.local/bin/gh pr create \
+  --repo ABilenduke/content-engine \
+  --title "{story-name}" \
+  --label "type:story,area:{area}" \
+  --body "$(cat <<'EOF'
+## Summary
+{1-3 sentences from journal summary}
+
+## Changes
+{list of key files changed, grouped by step}
+
+## Story Documents
+- Brief: {path}/brief.md
+- PRD: {path}/prd.md
+- Design: {path}/design.md
+- Plan: {path}/plan.md
+- Journal: {path}/journal.md
+
+## Acceptance Criteria Verification
+{from ralph loop Phase 2 — each AC with ✅/⚠️/❌ status}
+
+## Testing
+- Ralph loop: {iterations} step loops, {fixes} fixes
+- Final ralph: {phases} phases, {adversarial-tests} adversarial tests
+- All checks passing: ✅ | ⚠️ {issues}
+EOF
+)"
+
+# Comment on the story ticket that PR is ready for review
+~/.local/bin/gh issue comment {ticket-number} \
+  --repo ABilenduke/content-engine \
+  --body "PR #{pr-number} created. Ready for review."
+```
 
 ---
 
@@ -153,7 +318,7 @@ Run the full verification stack against the entire project:
 4. **Regenerate reference docs** — Run `php artisan docs:generate` and commit any changes to `docs/generated/`.
 5. **Custom checks** — Anything the plan specifies (migration reversibility, performance benchmarks, etc.)
 
-If failures exist, fix them and commit: `ralph check: {description}`
+If failures exist, fix them and commit: `{story-name} ralph check: {description}`
 
 Proceed to Phase 2 regardless (even if Phase 1 was clean).
 
@@ -163,21 +328,27 @@ Re-read every file you created or modified. Compare against the plan. This is a 
 
 **Check for:**
 
-- **Missed requirements**: Walk through each plan section. Is anything from scope that wasn't implemented?
-- **Acceptance criteria gaps**: Go through Section 6 of the plan line by line. Is each criterion satisfied? Can you prove it?
+- **Missed requirements**: Walk through each plan step. Is anything from scope that wasn't implemented?
+- **Acceptance criteria gaps** (format-dependent):
+    - **New format**: Read prd.md's Acceptance Criteria section. Go through each Given/When/Then criterion line by line. Is each criterion satisfied? Can you prove it?
+    - **Old format**: Go through Section 6 of the plan line by line. Is each criterion satisfied?
 - **Code smells**: Duplicated logic, overly complex methods, poor naming, missing error handling, hardcoded values that should be configurable
 - **Missing documentation**: Did you add docblocks/comments where the plan called for them? Are new config values documented?
 - **Consistency**: Does the new code follow the same patterns as the existing codebase? Naming conventions, file organization, error handling patterns?
 - **Security**: SQL injection vectors, XSS, missing auth checks, exposed sensitive data, mass assignment vulnerabilities
 - **Performance**: N+1 queries, missing indexes, unbounded queries, missing pagination
 
-Journal everything found. Fix issues and commit: `ralph review: {description}`
+Journal everything found. Fix issues and commit: `{story-name} ralph review: {description}`
 
 Proceed to Phase 3 regardless (even if Phase 2 was clean).
 
 ### Phase 3: Adversarial Testing
 
-Actively try to break your own code. Write NEW tests that target edge cases, failure modes, and the "what if" scenarios from Section 5 of the plan.
+Actively try to break your own code. Write NEW tests that target edge cases, failure modes, and the "what if" scenarios from the plan's edge cases section.
+
+**Source of edge cases** (format-dependent):
+- **New format**: Read design.md's "Edge Cases & Error Handling" section for scenarios to test
+- **Old format**: Read Section 5 of the plan for edge case scenarios
 
 **Techniques:**
 
@@ -190,7 +361,7 @@ Actively try to break your own code. Write NEW tests that target edge cases, fai
 
 **Write the tests.** Don't just think about edge cases — write actual test cases, run them, and see what breaks.
 
-Journal everything found. Fix issues and commit: `ralph adversarial: {description}`
+Journal everything found. Fix issues and commit: `{story-name} ralph adversarial: {description}`
 
 ### Phase 4-5: Fix & Re-verify (if needed)
 
@@ -208,7 +379,7 @@ If issues remain after Phase 5 (iteration 5 total), stop and journal what's unre
 **Checks run**: [full test suite, lint, type check, custom]
 **Results**: [pass/fail details]
 **Fixes**: [if any]
-**Commit**: `ralph check: {desc}` → `[hash]` (or "No fixes needed")
+**Commit**: `{story-name} ralph check: {desc}` → `[hash]` (or "No fixes needed")
 
 ### Phase 2: Self-Review
 
@@ -221,7 +392,7 @@ If issues remain after Phase 5 (iteration 5 total), stop and journal what's unre
 - AC-1: ✅ Verified by test_xxx
 - AC-2: ✅ Verified by test_yyy
 - AC-3: ⚠️ Requires manual verification — [why]
-  **Commit**: `ralph review: {desc}` → `[hash]` (or "No issues found")
+  **Commit**: `{story-name} ralph review: {desc}` → `[hash]` (or "No issues found")
 
 ### Phase 3: Adversarial Testing
 
@@ -231,7 +402,7 @@ If issues remain after Phase 5 (iteration 5 total), stop and journal what's unre
 
 - [Failure 1 — edge case, what broke, fix applied]
 - [Failure 2 — ...]
-  **Commit**: `ralph adversarial: {desc}` → `[hash]` (or "All adversarial tests passed")
+  **Commit**: `{story-name} ralph adversarial: {desc}` → `[hash]` (or "All adversarial tests passed")
 
 ### Phase 4: Re-verification (if needed)
 
@@ -294,7 +465,7 @@ For each step in the plan's implementation roadmap:
 - **Deviations from plan** — with rationale
 - **Codebase discoveries** — existing patterns, conflicts, surprises
 - **Decisions made on the fly** — with rationale
-- **Acceptance criteria verification** — line-by-line check against plan
+- **Acceptance criteria verification** — line-by-line check against prd.md (new format) or plan Section 6 (old format)
 
 ### Don't Journal
 
@@ -337,6 +508,7 @@ Branch: feature/{feature}/{change} | Last commit: {hash}
 10. **Ask the user when the plan doesn't cover something.**
 11. **Pause at plan checkpoints.**
 12. **The final commit includes the journal.**
+13. **GitHub operations are new-format only.** Never touch GitHub for old-format iterations.
 
 ---
 
@@ -344,27 +516,80 @@ Branch: feature/{feature}/{change} | Last commit: {hash}
 
 When the final ralph loop completes:
 
-1. Add `## Summary` section to the journal:
-    - What was delivered
-    - Branch name, total commits, final commit hash
-    - Ralph loop stats: per-step iterations/fixes + final loop phases/fixes
-    - Adversarial tests added: count and what they cover
-    - Verification result: all passing / N issues remaining
-    - Duration
-    - Deviations from plan
-    - Open items
-    - Lessons learned
+### New Format (stories/)
+
+1. Add `## Summary` section to the journal (see below)
+2. **Update feature README.md**:
+    - Add the story to the stories table in the feature's README.md
+    - Update the "Current Architecture" or other living sections if the story changed the feature
+    - If no README.md exists, create one using the feature README template
+3. **Create PR** via `gh pr create` with the format shown in GitHub Integration above
+4. **Comment on ticket** that PR is ready for review
+5. Final commit with completed journal: `{story-name}: complete - add execution journal and update feature docs`
+6. Update plan status to "Complete" (or "Complete with issues")
+7. Update `docs/features/index.md` with latest story info
+8. Tell user: "Done on branch `feature/{name}`. [N] commits, [N] ralph fixes, [N] adversarial tests added. [All checks pass / N issues remain.] PR #{number} created. Journal at [path]."
+
+### Old Format (iterations/)
+
+1. Add `## Summary` section to the journal
 2. Final commit with completed journal
 3. Update plan status to "Complete" (or "Complete with issues")
 4. Update `docs/features/index.md` if needed
 5. Tell user: "Done on branch `feature/{name}`. [N] commits, [N] ralph fixes, [N] adversarial tests added. [All checks pass / N issues remain.] Journal at [path]."
+
+### Journal Summary Section
+
+```markdown
+## Summary
+
+**Delivered**: [1-3 sentences]
+
+**Branch**: `feature/{feature}/{change-name}`
+**Commits**: [total count]
+**Final commit**: `[short hash]`
+
+**Ralph loop stats**:
+- Step loops: [iterations] iterations, [fixes] fixes
+- Final loop — Phase 1 (checks): [pass/fix count]
+- Final loop — Phase 2 (self-review): [findings count] findings, [fixes] fixes
+- Final loop — Phase 3 (adversarial): [tests written] tests written, [failures] failures caught
+- Verification result: All passing ✅ | [N] issues remaining ⚠️
+
+**Adversarial tests added**: [count] — covering [brief description]
+
+**Deviations from plan**: [Count — brief summary]
+
+**Open items**:
+- [Anything left undone or needing follow-up]
+
+**Lessons learned**:
+- [What would you do differently?]
+```
+
+---
+
+## Feature README Updates (New Format Only)
+
+After completing execution, update the feature's living documentation:
+
+1. **Stories table**: Add a new row to the stories table in `docs/features/{feature}/README.md`:
+    ```markdown
+    | {date} | [{story-name}](stories/{date}_{story-name}/) | [#{ticket}](link) | Complete |
+    ```
+
+2. **Architecture section**: If the story changed the feature's architecture (new models, routes, components), update the "Current Architecture" section in the README.
+
+3. **Known Issues**: If the ralph loop found unresolved issues, add them to the "Known Issues" section.
+
+4. If the feature README doesn't exist yet, create one using `.claude/skills/feature/templates/feature-readme-v2.md`.
 
 ---
 
 ## Handling Blocked Steps
 
 1. Journal what's blocking
-2. Commit partial work: `step {N} (partial): {reason}`
+2. Commit partial work: `{story-name} step {N} (partial): {reason}`
 3. Mark as ❌ Blocked
 4. Ask user: skip, resolve now, or stop?
 5. If skipping, note downstream impacts — final ralph loop may catch cascading issues

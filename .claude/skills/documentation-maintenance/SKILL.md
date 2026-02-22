@@ -20,7 +20,7 @@ Activate this skill when:
 
 ## File-to-Domain Mapping
 
-This table shows which skills, docs, and agents relate to each code area. The hook script uses the same mapping for skills and docs.
+This table shows which skills, docs, and agents relate to each application code area. The `doc-sync-hint.sh` hook uses the same mapping for skills and docs (note: the hook only triggers on application code changes, not on documentation files — those are covered by the Story Document Mapping table below).
 
 | Code path pattern | Skills | Docs | Agents |
 |---|---|---|---|
@@ -49,6 +49,29 @@ This table shows which skills, docs, and agents relate to each code area. The ho
 | `app/Models/NewsletterSubscriber.php`, `app/Enums/{SubscriberStatus,SubscriptionSource}.php`, `app/Http/Controllers/NewsletterController.php`, `app/Mail/Newsletter*.php`, `app/Events/Newsletter*.php`, `app/Listeners/Send*Email.php` | — | `docs/generated/schema.md`, `docs/generated/routes.md` | — |
 | `app/Models/SocialIdentity.php`, `app/Enums/AuthProvider.php`, `app/Http/Controllers/Auth/*`, `app/Actions/Fortify/*`, `app/Providers/FortifyServiceProvider.php`, `app/Http/Responses/*`, `config/fortify.php`, `routes/auth.php` | — | `docs/generated/schema.md`, `docs/generated/routes.md` | `frontend-developer` |
 | `.claude/skills/*` (excluding `skill-builder/` itself) | `skill-builder` | — | — |
+
+## Story Document Mapping
+
+This table maps documentation files to the skills that create or consume them. Use this when editing story documents to understand which skills are involved.
+
+| Document path pattern | Created by | Consumed by |
+|---|---|---|
+| `docs/features/*/stories/*/brief.md` | `/research story`, `/plan brief` | `/plan` (context for prd.md) |
+| `docs/features/*/stories/*/context.md` | `/research context` | External AI tools (manual) |
+| `docs/features/*/stories/*/prd.md` | `/plan`, `/plan prd` | `/execute` (AC verification in ralph loop) |
+| `docs/features/*/stories/*/design.md` | `/plan`, `/plan design` | `/execute` (file manifest, edge cases) |
+| `docs/features/*/stories/*/plan.md` | `/plan`, `/plan steps` | `/execute` (primary — implementation roadmap) |
+| `docs/features/*/stories/*/journal.md` | `/execute` | Read-only historical record |
+| `docs/features/*/stories/*/feedback.md` | `/feedback` | Read-only historical record |
+| `docs/features/*/bugs/*.md` | `/bugfix` | Read-only historical record |
+| `docs/features/*/spikes/*.md` | `/research spike` | May inform future `/research story` |
+| `docs/features/*/README.md` | `/feature` (create), `/execute` (update) | All skills (living feature reference) |
+| `docs/architecture/*` | Manual or `/execute` | All skills (system context) |
+| `docs/decisions/*.md` | Manual | All skills (decision records) |
+| `docs/proposals/*.md` | Manual | `/research story` (if accepted) |
+| `docs/spikes/*.md` | `/research spike` | May inform future `/research story` |
+| `docs/runbooks/*.md` | Manual or `/execute` | Operational reference |
+| `.claude/conventions/github-workflow.md` | Manual | `/research`, `/plan`, `/execute`, `/feedback`, `/bugfix` |
 
 ## When to Update Skills
 

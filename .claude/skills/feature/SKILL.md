@@ -14,7 +14,8 @@ This skill builds and maintains a living catalog of application features in `doc
 When this skill is invoked:
 
 1. Read the supporting files in this skill directory:
-    - `templates/feature-readme.md` — template for individual feature READMEs
+    - `templates/feature-readme-v2.md` — template for individual feature READMEs (Diátaxis structure: Overview, Architecture, Common Tasks, Stories)
+    - `templates/feature-readme.md` — legacy template (for reference only; use v2 for all new features)
     - `templates/index.md` — template for the feature catalog index
 2. Check if `docs/features/` already exists:
     - **If yes**: Read `docs/features/index.md` and list existing features. Ask the user what they want to do (add a new feature, update an existing one, review the catalog).
@@ -36,7 +37,7 @@ Walk the developer through mapping out their entire application. This is a brain
 3. For each feature, have a brief conversation to nail down:
     - **What is it?** (1-3 sentence description)
     - **Why does it exist?** (What problem does it solve?)
-4. Create the directory structure and files
+4. Create the directory structure and files (each feature gets: `README.md`, `stories/`, `bugs/`, `spikes/`)
 5. Generate the index
 
 **Keep it lightweight.** The feature README is intentionally minimal — just description and purpose. Don't try to document implementation details, file lists, or technical architecture here. That's what plans are for.
@@ -46,9 +47,10 @@ Walk the developer through mapping out their entire application. This is a brain
 The catalog already exists. The developer wants to add a new feature.
 
 1. Ask what the feature is
-2. Brief Q&A to get description and purpose
-3. Create the feature directory and README
-4. Update the index
+2. Brief Q&A to get description, purpose, domain, and status
+3. Create the feature directory with subdirectories: `stories/`, `bugs/`, `spikes/`
+4. Create the README using `templates/feature-readme-v2.md` (Diátaxis format)
+5. Update the index
 
 ### Mode 3: Update a Feature
 
@@ -77,20 +79,36 @@ This skill creates and maintains:
 docs/features/
 ├── index.md                              ← auto-maintained catalog
 ├── auth/
-│   ├── README.md                         ← what this feature is
-│   └── iterations/                       ← created by /plan and /execute
-│       └── ...
-├── billing/
-│   ├── README.md
-│   └── iterations/
+│   ├── README.md                         ← living doc: what this feature IS today
+│   ├── stories/                          ← immutable story records (new format)
+│   │   └── {YYYY-MM-DD}_{story-name}/
+│   │       ├── brief.md                  ← WHY (business case)
+│   │       ├── prd.md                    ← WHAT (requirements + AC)
+│   │       ├── design.md                 ← HOW (architecture)
+│   │       ├── plan.md                   ← WHEN/ORDER (roadmap)
+│   │       ├── journal.md                ← WHAT HAPPENED (execution record)
+│   │       └── feedback.md               ← REVIEW CYCLE (PR feedback)
+│   ├── bugs/                             ← bug reports and fixes
+│   │   └── {YYYY-MM-DD}_{description}.md
+│   ├── spikes/                           ← feature-specific investigations
+│   │   └── {YYYY-MM-DD}_{question}.md
+│   └── iterations/                       ← legacy plans (old format, read-only)
 │       └── ...
 └── [feature-name]/
     ├── README.md
-    └── iterations/
-        └── ...
+    ├── stories/
+    ├── bugs/
+    ├── spikes/
+    └── iterations/                       ← legacy (if any exist)
 ```
 
-The `iterations/` directory is created later by the `/plan` skill — this skill only creates the feature directory and README.
+### Directory Responsibilities
+
+- **stories/**: Created by `/research story` and populated by `/plan` + `/execute`. Story documents are **immutable** — historical records of what was planned, designed, built, and learned.
+- **bugs/**: Created by `/bugfix`. Lightweight fix records.
+- **spikes/**: Created by `/research spike`. Time-boxed investigations with recommendations.
+- **iterations/**: Legacy directory from old format. Existing iterations are untouched; new work goes in `stories/`. The `/execute` skill detects format automatically.
+- **README.md**: A **living** document — updated after each story completes. Describes what the feature IS today.
 
 ---
 
@@ -122,34 +140,62 @@ That's it. Move fast.
 
 After any change to the feature catalog, regenerate `docs/features/index.md` by reading all feature READMEs and compiling them. Use the template at `templates/index.md`.
 
-The index groups features by domain and tracks iteration counts:
+The index groups features by domain and tracks stories, bugs, and latest activity:
 
 <code-snippet name="Feature Index Entry" lang="markdown">
 ## Business Domain
 
-| Feature | Description | Iterations |
-|---------|-------------|------------|
-| [article-publishing](article-publishing/) | Core content lifecycle — CRUD, status workflow, revisions, SEO metadata | 1 — [Block-Based Content Architecture](article-publishing/iterations/2026-02-14_block-based-content-architecture/plan.md) |
-| [newsletter](newsletter/) | Double opt-in email subscriber system with verification and unsubscribe | 0 |
+| Feature | Description | Stories | Open Bugs | Latest Story |
+|---------|-------------|---------|-----------|--------------|
+| [article-publishing](article-publishing/) | Core content lifecycle — CRUD, status workflow, revisions, SEO metadata | 1 | 0 | [Block-Based Architecture](article-publishing/stories/2026-02-14_block-based-architecture/) |
+| [newsletter](newsletter/) | Double opt-in email subscriber system with verification and unsubscribe | 0 | 0 | — |
 </code-snippet>
+
+**Counting rules:**
+- **Stories**: Count directories in `stories/` (new format) + directories in `iterations/` (legacy format)
+- **Open Bugs**: Count `.md` files in `bugs/` (excluding any marked as Fixed/Won't Fix if you can parse the Status field)
+- **Latest Story**: Link to the most recent story or iteration by date prefix
 
 ---
 
 ## Feature README Format
 
-Feature READMEs are intentionally minimal — two sections, no technical details:
+Feature READMEs use the **v2 Diátaxis-structured format** (`templates/feature-readme-v2.md`). They are **living documents** updated after each story completes:
 
-<code-snippet name="Feature README" lang="markdown">
+<code-snippet name="Feature README v2" lang="markdown">
 # Broadcasting
 
-## What is it?
+**Domain**: Infrastructure
+**Status**: Active
 
-Real-time communication layer using Laravel Reverb as the WebSocket server and Laravel Echo on the frontend. Runs as a dedicated Docker service with nginx proxying, and exposes Vue composables for channel subscriptions.
+## Overview
+Real-time communication layer using Laravel Reverb as the WebSocket server and Laravel Echo on the frontend. Enables instant feedback without polling.
 
-## Why does it exist?
+## Architecture
+- **Models**: None (uses Laravel's built-in broadcasting)
+- **Controllers**: None (event-driven)
+- **Key routes**: `broadcasting/auth` (channel authorization)
+- **Jobs/Events**: BroadcastEvent, NotificationSent
 
-Enables real-time features (notifications, live content updates, collaborative signals) without polling. The foundation for any future feature that needs instant feedback.
+## Common Tasks
+- How to add a new broadcast channel
+- How to subscribe to events in Vue components
+
+## Stories
+
+| Date | Story | Ticket | Status |
+|------|-------|--------|--------|
+| 2026-01-15 | [Initial Setup](stories/2026-01-15_initial-setup/) | [#12](link) | Complete |
+
+## Known Issues
+- None currently
 </code-snippet>
+
+### Living vs Immutable Documents
+
+- **README.md** is **living** — updated after each story completes to reflect current state
+- **Story documents** (brief.md, prd.md, design.md, plan.md, journal.md, feedback.md) are **immutable** — historical records never edited after completion
+- When updating a README after a story, add the story to the Stories table and update Overview/Architecture sections to reflect new capabilities
 
 ---
 
@@ -158,7 +204,8 @@ Enables real-time features (notifications, live content updates, collaborative s
 - **Over-documenting in READMEs**: Feature READMEs are "what" and "why" only — never "how". Technical details, file lists, and architecture go in iteration plans created by `/plan`. READMEs that include implementation details become stale within days.
 - **Forgetting to update the index**: Every add, remove, or rename must update `docs/features/index.md`. The index is the entry point — a feature without an index entry is invisible to `/plan` and `/execute`.
 - **Feature granularity mismatch**: A feature should be one cohesive capability. "Admin" is too broad (it contains dashboard, articles, categories, tags, media — each is a separate feature). "Article slug generation" is too narrow (it's part of article-publishing). If two things always change together, they're one feature.
-- **Missing iterations directory**: The `iterations/` directory is created by `/plan`, not `/feature`. But the feature directory must exist before `/plan` can create iterations inside it. If `/plan` says the feature doesn't exist, run `/feature` first.
+- **Missing stories directory**: The `/feature` skill creates `stories/`, `bugs/`, and `spikes/` directories when adding a feature. The feature directory must exist before `/research story` or `/plan` can create stories inside it. If `/plan` says the feature doesn't exist, run `/feature` first.
+- **Old iterations vs new stories**: Features may have both `iterations/` (legacy) and `stories/` (new format). Legacy iterations are read-only — all new work goes in `stories/`. The index counts both when showing story/iteration totals.
 - **Wrong domain grouping in index**: Features are grouped by domain (Business, Platform, Infrastructure). A feature in the wrong domain confuses navigation. Auth is Platform (not Infrastructure). Newsletter is Business (not Platform). Broadcasting is Infrastructure (not Platform).
 
 $ARGUMENTS

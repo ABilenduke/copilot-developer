@@ -1,13 +1,9 @@
 ---
 name: research-brief
 description: >-
-  Scans the codebase and produces a structured research brief optimized for
-  AI deep research tools (Gemini, Perplexity, ChatGPT, etc.). Gathers stack
-  context, architectural patterns, relevant code excerpts, and a pattern
-  exemplar, then frames research objectives that map to the plan skill's
-  expected sections. Activates when the user says "research brief",
-  "/research-brief", "I want to research", "prepare a brief for", or wants
-  to research how to build a feature before planning it.
+  DEPRECATED: Use /research context instead. This skill is kept for backward
+  compatibility only. Activates ONLY when the user explicitly says
+  "/research-brief". For all other research triggers, use the /research skill.
 ---
 
 # Research Brief Generator

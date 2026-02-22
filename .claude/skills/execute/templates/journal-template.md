@@ -4,8 +4,10 @@
 **Plan**: [relative path to plan.md]
 **Branch**: `feature/{feature}/{change-name}`
 **Base commit**: `[hash]` ([branch it was created from])
+**Ticket**: #{issue-number}
 **Started**: [YYYY-MM-DD HH:MM]
 **Completed**: [YYYY-MM-DD HH:MM or "In Progress"]
+**Documents available**: brief ✅|⬜ | prd ✅|⬜ | design ✅|⬜ | plan ✅
 
 **Verification Stack**:
 - Tests: [command]
@@ -37,7 +39,7 @@
 **Checks run**: [full test suite, lint, type check, custom]
 **Results**: [pass/fail details per check]
 **Fixes**: [what was fixed, or "No fixes needed"]
-**Commit**: `ralph check: [desc]` → `[hash]` | "No commit needed"
+**Commit**: `{story-name} ralph check: [desc]` → `[hash]` | "No commit needed"
 
 ### Phase 2: Self-Review
 **Files reviewed**: [list of new/modified files]
@@ -45,19 +47,25 @@
 - [Finding — severity, description, fix applied or "acceptable"]
 **Acceptance criteria check**:
 - AC-1: ✅ | ⚠️ | ❌ — [verification method or note]
-**Commit**: `ralph review: [desc]` → `[hash]` | "No issues found"
+**Commit**: `{story-name} ralph review: [desc]` → `[hash]` | "No issues found"
 
 ### Phase 3: Adversarial Testing
 **Tests written**: [count] new test cases
 **Targeting**: [what scenarios/edge cases]
 **Failures found**:
 - [Failure — edge case, what broke, fix applied]
-**Commit**: `ralph adversarial: [desc]` → `[hash]` | "All adversarial tests passed"
+**Commit**: `{story-name} ralph adversarial: [desc]` → `[hash]` | "All adversarial tests passed"
 
 ### Phase 4: Re-verification (if fixes were made)
 **Checks run**: [full suite including new adversarial tests]
 **Result**: All checks pass ✅ | [remaining issues]
 **Commit**: `[hash]` | "Clean pass"
+
+---
+
+## Feature Docs Updated
+- README.md: [what was updated, or "N/A — old format"]
+- runbook.md: [what was updated, or "N/A"]
 
 ---
 
