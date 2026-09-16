@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Research visit — Northbank Archive</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="api.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header><a href="#">Northbank Archive</a><span>Research appointments</span></header>
+    <main>
+      <p>Collections / Plan your visit</p>
+      <h1>Make room for a good question.</h1>
+      <p>
+        Request a two-hour appointment to consult maps, photographs, and records from Northbank's
+        past. A member of our team will help you find a place to start.
+      </p>
+      <div class="layout">
+        <div>
+          <form id="booking" novalidate>
+            <h2>Your research visit</h2>
+            <p>All fields are required except access needs.</p>
+            <p>Name</p>
+            <input name="name" placeholder="Full name" />
+            <p>Email</p>
+            <input name="email" placeholder="Email address" />
+            <p>Appointment</p>
+            <select name="date">
+              <option value="">Choose a date</option>
+              <option value="2026-10-06">October 6, 2026 · 10 a.m.</option>
+              <option value="2026-10-13">October 13, 2026 · 10 a.m.</option>
+              <option value="2026-10-20">October 20, 2026 · 10 a.m.</option>
+            </select>
+            <p>What are you researching?</p>
+            <textarea
+              name="purpose"
+              rows="3"
+              placeholder="A place, a person, or a question"
+            ></textarea>
+            <p>Access needs (optional)</p>
+            <textarea name="access" rows="2"></textarea>
+            <p>
+              <input type="checkbox" name="agreement" /> I understand this is a request, not a
+              confirmed appointment.
+            </p>
+            <div id="message"></div>
+            <button type="submit">Request a visit</button>
+          </form>
+          <div id="result" hidden></div>
+        </div>
+        <aside>
+          <h2>Before you visit</h2>
+          <p>
+            Appointments are free and last two hours. Bring a photo ID and a pencil. Bags can be
+            stored in a locker.
+          </p>
+          <h3>Finding us</h3>
+          <p>
+            24 Mill Street, Northbank<br />Step-free entrance on Mill Street. Accessible washroom
+            and adjustable desks available.
+          </p>
+          <h3>Change of plans?</h3>
+          <p>Let us know at least 24 hours ahead. There is no cancellation fee.</p>
+          <p>This is a local demonstration. It does not send an appointment request.</p>
+        </aside>
+      </div>
+    </main>
+    <footer>Northbank Archive · Local history, open to everyone.</footer>
+  </body>
+</html>

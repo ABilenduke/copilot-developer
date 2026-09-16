@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend Craft"
+  short_description: "Design and refine interfaces with rendered evidence"
+  default_prompt: "Use $frontend-craft to improve this interface, preserve its requirements, and verify the rendered result."

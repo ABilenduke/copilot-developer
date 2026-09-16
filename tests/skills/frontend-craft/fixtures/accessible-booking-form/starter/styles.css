@@ -1,0 +1,73 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #f4f3ef;
+  color: #3e443e;
+  font:
+    16px Arial,
+    sans-serif;
+}
+header,
+main,
+footer {
+  max-width: 1000px;
+  padding: 24px;
+  margin: auto;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+}
+a {
+  color: inherit;
+}
+h1 {
+  font-size: 32px;
+}
+p {
+  line-height: 1.45;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 600px 300px;
+  gap: 30px;
+}
+form,
+aside {
+  padding: 24px;
+  background: white;
+}
+input:not([type="checkbox"]),
+select,
+textarea {
+  width: 100%;
+  border: 1px solid #b9b9b9;
+  padding: 10px;
+  font: inherit;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+}
+form p {
+  margin: 18px 0 6px;
+}
+button {
+  background: #47604f;
+  color: white;
+  border: 0;
+  padding: 10px 14px;
+  margin-top: 20px;
+  cursor: pointer;
+}
+#message {
+  color: #bd6d61;
+  padding-top: 12px;
+}
+footer {
+  margin-top: 30px;
+}

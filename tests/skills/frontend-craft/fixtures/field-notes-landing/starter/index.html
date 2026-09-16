@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Field Notes — Print workshops in Hamilton</title>
+    <meta
+      name="description"
+      content="Small-group printmaking evenings at Field Notes in Hamilton. Explore block printing or monoprinting; materials and tea included."
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <a href="#">Field Notes</a>
+      <nav aria-label="Main">
+        <a href="#workshops">Workshops</a><a href="#studio">The studio</a
+        ><a href="#reserve">Reserve</a>
+      </nav>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <p>Evenings at the print table · Hamilton, Ontario</p>
+          <h1>Make something worth keeping.</h1>
+          <p>
+            A little ink. A stack of paper. An evening away from the screen. Learn to print by hand
+            in our small, friendly studio.
+          </p>
+          <a class="button" href="#workshops">Find your workshop</a>
+          <p>No experience needed. All materials included.</p>
+        </div>
+        <img
+          src="assets/print-study.svg"
+          alt="Overlapping ochre and blue botanical prints on sheets of warm white paper"
+        />
+      </section>
+      <section id="workshops">
+        <h2>A seat at the table</h2>
+        <p>
+          Two ways to begin. Each session is limited to 10 people, with time for individual
+          guidance.
+        </p>
+        <div class="workshops">
+          <article>
+            <img
+              src="assets/block-print.svg"
+              alt="A blue botanical block print with visible carved lines"
+            />
+            <h3>Block printing: first impressions</h3>
+            <p>
+              Carve a simple botanical stamp and print a set of six cards. Take home your block and
+              everything you make.
+            </p>
+            <p>October 8, 2026 · 6:30–9:00 p.m.</p>
+            <p>$68 CAD · materials and tea included</p>
+            <a href="#reserve" data-workshop="block">Choose block printing</a>
+          </article>
+          <article>
+            <img
+              src="assets/monoprint.svg"
+              alt="An abstract monoprint of ochre circles and blue wavy lines"
+            />
+            <h3>Monoprinting: play with colour</h3>
+            <p>
+              Layer shapes and textures into one-of-a-kind prints. A playful introduction without
+              any carving.
+            </p>
+            <p>October 22, 2026 · 6:30–9:00 p.m.</p>
+            <p>$62 CAD · materials and tea included</p>
+            <a href="#reserve" data-workshop="mono">Choose monoprinting</a>
+          </article>
+        </div>
+      </section>
+      <section id="studio">
+        <h2>A working studio. A welcoming table.</h2>
+        <p>
+          We are a small independent print studio at 18 Foundry Lane, Hamilton. Workshops take place
+          around a shared table with step-free access from the street and an accessible washroom.
+        </p>
+        <p>
+          Wear something you would not mind getting a little ink on. We provide aprons, tools,
+          paper, and tea. If you have access needs, add a note when reserving and we will get in
+          touch.
+        </p>
+        <h3>If your plans change</h3>
+        <p>
+          Cancel at least 72 hours before your workshop for a full refund. Within 72 hours, you can
+          transfer your place to a friend.
+        </p>
+      </section>
+      <section id="reserve">
+        <h2>Save your evening</h2>
+        <p>Try the reservation form. This preview does not send a booking or take payment.</p>
+        <form id="reservation">
+          <label
+            >Workshop<select name="workshop" required>
+              <option value="">Choose a workshop</option>
+              <option value="block">Block printing · October 8 · $68 CAD</option>
+              <option value="mono">Monoprinting · October 22 · $62 CAD</option>
+            </select></label
+          ><label>Your name<input name="name" autocomplete="name" required /></label
+          ><label>Email<input type="email" name="email" autocomplete="email" required /></label
+          ><label>Access needs or a note (optional)<textarea name="note" rows="3"></textarea></label
+          ><button type="submit">Preview reservation</button>
+          <p id="confirmation" role="status"></p>
+        </form>
+      </section>
+    </main>
+    <footer>
+      <p>Field Notes · Made slowly, together.</p>
+      <a href="#workshops">Explore the workshops</a>
+    </footer>
+  </body>
+</html>

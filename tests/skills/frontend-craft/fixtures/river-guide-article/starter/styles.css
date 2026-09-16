@@ -1,0 +1,81 @@
+body {
+  margin: 0;
+  color: #4b5047;
+  background: #f7f7f1;
+  font:
+    16px Georgia,
+    serif;
+}
+.header,
+.page,
+.footer {
+  max-width: 1120px;
+  margin: auto;
+  padding: 24px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  background: #e0e5d8;
+}
+a {
+  color: #435b39;
+}
+.crumb {
+  color: #929889;
+  font:
+    14px Arial,
+    sans-serif;
+  margin: 20px 0;
+}
+.title {
+  font-size: 42px;
+  font-weight: bold;
+}
+p {
+  line-height: 1.45;
+}
+.facts {
+  display: flex;
+  gap: 35px;
+  padding: 10px 20px;
+  background: #eceee6;
+}
+.contents {
+  margin: 25px 0;
+  padding: 20px;
+  border: 1px solid #ccd0c2;
+}
+.contents span {
+  display: inline-block;
+  margin: 10px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.section-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-top: 35px;
+}
+.sub-title {
+  font-size: 22px;
+  margin-top: 25px;
+}
+.article img {
+  width: 800px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+td {
+  border: 1px solid #bcc5b4;
+  padding: 12px;
+}
+.footer {
+  margin-top: 35px;
+  border-top: 1px solid #ccd0c2;
+}
+.footer a {
+  margin-left: 20px;
+}

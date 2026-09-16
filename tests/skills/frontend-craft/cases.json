@@ -1,0 +1,317 @@
+{
+  "schema_version": 1,
+  "visibility": "Evaluator only. Copy starter directories into candidate workspaces and pass prompt.md; do not expose this file or the parent fixtures directory to candidates.",
+  "cases": [
+    {
+      "id": "field-notes-landing",
+      "title": "Expressive public workshop landing page",
+      "prompt": "fixtures/field-notes-landing/prompt.md",
+      "starter": "fixtures/field-notes-landing/starter",
+      "setup": [],
+      "serve": ["python3", "-m", "http.server", "{port}", "--bind", "127.0.0.1"],
+      "validate": [],
+      "path": "/",
+      "viewports": [
+        { "width": 1440, "height": 1000 },
+        { "width": 390, "height": 844 }
+      ],
+      "starter_shortcomings": "Legible functional baseline with weak typographic hierarchy, undifferentiated sections, generic composition, and limited connection between the printmaking subject and layout. Do not reward a particular font or style recipe.",
+      "rubric": {
+        "design": [
+          "Art direction feels specific to a small hands-on print studio and welcoming to beginners.",
+          "Hierarchy communicates the offer and routes visitors toward choosing a workshop.",
+          "Composition, typography, spacing, imagery, and details form an intentional whole across both widths.",
+          "Workshop comparison and practical information remain easy to find."
+        ],
+        "technical": [
+          "Workshop choices populate the reservation control correctly; valid input produces an honest local preview.",
+          "Navigation, form controls, focus, labels, and messages remain usable with keyboard and assistive technology.",
+          "Page content reflows at 390px and 320px without clipped text or body overflow.",
+          "Supplied facts and assets remain represented accurately; no remote asset dependency is introduced."
+        ],
+        "workflow": [
+          "Makes a defensible direction choice and completes work without unnecessary preference checkpoints.",
+          "Inspects rendered output and distinguishes aesthetic critique from interaction verification.",
+          "Reports actual checks and unresolved limitations without unsupported claims."
+        ],
+        "hard_failures": [
+          "Reservation or workshop-selection flow no longer works.",
+          "Changes prices, dates, venue, cancellation policy, or claims a real booking was sent.",
+          "Introduces an unauthorized framework, external booking service, or fabricated endorsement.",
+          "Primary content or action is inaccessible at narrow widths or by keyboard."
+        ]
+      },
+      "scenarios": [
+        {
+          "id": "choose-workshop",
+          "actions": "Choose monoprinting, then block printing from the workshop sections.",
+          "expected": "Each action reaches the reservation form with the corresponding workshop selected."
+        },
+        {
+          "id": "reservation",
+          "actions": "Submit with required fields empty, then submit Ada with ada@example.test and block printing.",
+          "expected": "Missing inputs are identified; valid submission produces a preview for October 8 at $68 CAD and clearly states no real booking/payment occurred."
+        },
+        {
+          "id": "keyboard-mobile",
+          "actions": "Navigate links and complete the form using only keyboard; inspect 390px and 320px widths and 200% zoom.",
+          "expected": "Visible focus, operable controls, coherent reading order, useful tap targets, no lost content or body overflow."
+        }
+      ]
+    },
+    {
+      "id": "harbor-vue-operations",
+      "title": "Dense existing Vue operational interface",
+      "prompt": "fixtures/harbor-vue-operations/prompt.md",
+      "starter": "fixtures/harbor-vue-operations/starter",
+      "setup": [["npm", "ci", "--ignore-scripts", "--no-audit", "--no-fund"]],
+      "serve": [
+        "npm",
+        "run",
+        "dev",
+        "--",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "{port}",
+        "--strictPort"
+      ],
+      "validate": [["npm", "run", "build"]],
+      "path": "/",
+      "viewports": [
+        { "width": 1440, "height": 1000 },
+        { "width": 390, "height": 844 }
+      ],
+      "starter_shortcomings": "Working search/filter/sort/detail behavior. Large metric cards waste space, status styling lacks useful prioritization, repeated View controls lack job context, and the fixed sidebar/table cause narrow-screen page overflow. Detail selection has no focus management. Keep table-level scrolling acceptable when surrounding controls remain reachable and the region is usable.",
+      "rubric": {
+        "design": [
+          "Retains recognizable teal/slate Harbor identity and a compact operational composition.",
+          "At-risk jobs, due times, and handoff information are easy to find without relying on color alone.",
+          "Balances useful table density with readable alignment, grouping, and control hierarchy.",
+          "Responsive layout preserves important work rather than hiding information to make a screenshot fit."
+        ],
+        "technical": [
+          "Search by ID/customer/destination combines correctly with the status filter; empty results are understandable and recoverable.",
+          "Due-time sorting reverses the order without losing or mutating source jobs.",
+          "Details show the selected job and note; opening and closing remain usable by keyboard.",
+          "All 12 jobs, 3 at-risk jobs, 5 ready jobs, brand tokens, and Vue Composition API/TypeScript remain intact.",
+          "Build succeeds; no uncaught browser errors; controls and content work at wide and narrow widths."
+        ],
+        "workflow": [
+          "Works within the established design system and task scope.",
+          "Verifies real search/filter/sort/detail behavior as well as rendered hierarchy.",
+          "Avoids new backend, dependencies, unrelated charts, or fictional operational metrics."
+        ],
+        "hard_failures": [
+          "Removes or breaks search, filtering, sorting, or accurate job details.",
+          "Discards the supplied dataset, stack, or Harbor identity.",
+          "Introduces an inaccessible essential control or loses critical information at mobile width.",
+          "Build fails or the page produces an uncaught runtime error."
+        ]
+      },
+      "scenarios": [
+        {
+          "id": "combined-filters",
+          "actions": "Choose At risk; search Little Atlas. Then clear search, search Riverside with All statuses, and search a nonexistent customer.",
+          "expected": "Little Atlas returns only HB-1046; At risk alone returns HB-1042/HB-1046/HB-1051; Riverside returns HB-1044/HB-1049; unmatched text shows an understandable empty state."
+        },
+        {
+          "id": "sorting",
+          "actions": "With all filters clear, toggle due-time sorting twice.",
+          "expected": "Ascending begins HB-1042 at 14:00 and ends HB-1053 at 16:00; descending reverses those endpoints. All 12 jobs remain available."
+        },
+        {
+          "id": "handoff-details",
+          "actions": "Open HB-1046 details and close them; repeat using only the keyboard.",
+          "expected": "Little Atlas, J. Okafor, 4 parcels, 14:30, At risk, and the missing-label note appear accurately. Focus stays visible and returns to a useful place after closing."
+        },
+        {
+          "id": "responsive",
+          "actions": "Inspect at 1440px, 390px, and 320px; operate search/filter and inspect a selected job.",
+          "expected": "Controls remain visible and operable, text remains readable, and any horizontal scrolling is contained to a usable data region rather than the entire page."
+        }
+      ]
+    },
+    {
+      "id": "accessible-booking-form",
+      "title": "Accessible appointment request flow",
+      "prompt": "fixtures/accessible-booking-form/prompt.md",
+      "starter": "fixtures/accessible-booking-form/starter",
+      "setup": [],
+      "serve": ["python3", "-m", "http.server", "{port}", "--bind", "127.0.0.1"],
+      "validate": [],
+      "path": "/",
+      "viewports": [
+        { "width": 1440, "height": 1000 },
+        { "width": 390, "height": 844 }
+      ],
+      "starter_shortcomings": "Inputs have visual text but no programmatic labels; focus outlines removed; fixed grid overflows; validation checks only truthiness and has one generic message; email format unchecked; whitespace accepted; async status not announced; duplicate submissions allowed; confirmation cannot be revised. Candidate is allowed to fix these defects as part of the explicit brief.",
+      "rubric": {
+        "design": [
+          "Calm readable hierarchy explains what the request means and makes progress through the form clear.",
+          "Validation, loading, failure, and confirmation states receive appropriate emphasis without destabilizing the page.",
+          "Helpful context supports the form and remains usable at narrow widths."
+        ],
+        "technical": [
+          "Every field has a programmatic name, required/optional expectations, visible focus, and useful input/autocomplete semantics.",
+          "Missing/whitespace-only required values and malformed email are rejected; errors identify affected fields and are accessible.",
+          "Submission progress is exposed and duplicate requests are prevented while pending.",
+          "Service errors preserve all entered values and permit retry without re-entering information.",
+          "Success communicates request details and reference; revise returns to the populated editable form with useful focus.",
+          "Reflow, zoom, contrast, keyboard order, target sizes, and any added motion support accessibility."
+        ],
+        "workflow": [
+          "Exercises actual failure/retry/success states using supplied deterministic API behavior.",
+          "Keeps validation/interface changes proportionate and does not modify the API to bypass errors.",
+          "Separates observed checks from unperformed screen-reader or conformance audits."
+        ],
+        "hard_failures": [
+          "Changes api.js behavior or sends data to an external service.",
+          "Submission loses entered data on failure or creates duplicate requests while pending.",
+          "Required controls or error recovery are unavailable by keyboard.",
+          "No working success or revise path, or confirmation falsely claims an actual appointment is booked."
+        ]
+      },
+      "scenarios": [
+        {
+          "id": "validation",
+          "actions": "Submit an empty form; then try whitespace name/purpose and a malformed email.",
+          "expected": "No API request occurs. Errors identify affected controls and focus/announcements make recovery understandable."
+        },
+        {
+          "id": "retry",
+          "actions": "Fill Alex Reed, retry@example.test, October 13, family research, a note requesting an adjustable desk, and agreement. Submit twice rapidly, wait for failure, then retry.",
+          "expected": "Only one call starts while pending; all values survive the first failure; second intentional request succeeds with NB-2046."
+        },
+        {
+          "id": "persistent-failure",
+          "actions": "Reload and submit valid values with unavailable@example.test twice.",
+          "expected": "Each request fails accessibly; data remains intact, retry remains available, and no success is fabricated."
+        },
+        {
+          "id": "revise",
+          "actions": "Complete a successful request, then choose the revise/edit action.",
+          "expected": "Confirmation includes accurate details and local-demo meaning; form returns with previous values and logical keyboard focus."
+        },
+        {
+          "id": "responsive-keyboard",
+          "actions": "Complete the form with keyboard only and inspect 390px/320px, 200% zoom, and reduced-motion preference.",
+          "expected": "Labels and errors remain associated; focus is visible; no body overflow or clipped content; added animation respects reduced motion."
+        }
+      ]
+    },
+    {
+      "id": "river-guide-article",
+      "title": "Content-heavy public walking guide",
+      "prompt": "fixtures/river-guide-article/prompt.md",
+      "starter": "fixtures/river-guide-article/starter",
+      "setup": [],
+      "serve": ["python3", "-m", "http.server", "{port}", "--bind", "127.0.0.1"],
+      "validate": [],
+      "path": "/",
+      "viewports": [
+        { "width": 1440, "height": 1000 },
+        { "width": 390, "height": 844 }
+      ],
+      "starter_shortcomings": "Generic title, missing description and lang, accidental noindex, div-based headings/landmarks, pointer-only contents links, missing image alternative and table headers, wide prose measure, and fixed-width map overflow. All substantive copy exists in the initial HTML; no external fetch is needed.",
+      "rubric": {
+        "design": [
+          "Reading hierarchy and typographic measure make the long guide comfortable and scannable.",
+          "Route facts, access limitations, and seasonal caution are easy to locate without flattening the whole page into equal cards.",
+          "Visual identity suits a modest local walking guide, and the route map supports the content.",
+          "Desktop and mobile navigation serve long-form reading without obscuring content."
+        ],
+        "technical": [
+          "Landmarks, ordered heading levels, real fragment links, image alternative, and table headers convey content structure.",
+          "The main title, summary, body, route facts, and links remain available in initial HTML.",
+          "Production-appropriate title/description/canonical and indexing intent match the specified public URL; no conflicting noindex remains.",
+          "Contents links work by keyboard and preserve usable fragment navigation; anchors are not obscured by sticky elements.",
+          "Map, table, prose, and long content reflow without page overflow or hidden facts at narrow widths."
+        ],
+        "workflow": [
+          "Preserves factual route limitations and distinguishes illustrative fixture content from live travel advice.",
+          "Checks rendered reading quality and public-page semantics/indexing separately.",
+          "Adds no unsupported live maps, tracking, framework, or unnecessary structured-data claims."
+        ],
+        "hard_failures": [
+          "Omits or reverses the full-loop step/access limitations or floodwater caution.",
+          "Changes route distances, timing, publication date, or transport facts without authorization.",
+          "Leaves the production-intended page marked noindex or makes essential content dependent on external fetch.",
+          "Main navigation or essential route information is inaccessible by keyboard or at mobile width."
+        ]
+      },
+      "scenarios": [
+        {
+          "id": "section-navigation",
+          "actions": "Use keyboard to follow every contents link, then load /#access directly and use Back to top.",
+          "expected": "Real fragments address the correct sections, headings remain visible, and navigation works with scripts disabled."
+        },
+        {
+          "id": "facts",
+          "actions": "Find the full loop distance, step-free option, Orchard Lane steps, toilet hours, and rain advice.",
+          "expected": "5.2 km/1 hour 45 minutes; 2.4 km return step-free outing; 12 steps; 9 a.m.–5 p.m.; do not enter floodwater or pass closure signs."
+        },
+        {
+          "id": "source-seo",
+          "actions": "Inspect initial HTML and response metadata locally.",
+          "expected": "Meaningful title/description, en language, canonical https://walks.alderwick.example/guides/river-loop/, indexable intent, crawlable fragment links, and substantive content without JavaScript."
+        },
+        {
+          "id": "reading",
+          "actions": "Inspect top/middle/bottom at 1440px and 390px, plus 320px and 200% zoom.",
+          "expected": "Readable line lengths, useful heading hierarchy, accessible map/table, no clipped or hidden route details, and no horizontal body scrolling."
+        }
+      ]
+    }
+  ],
+  "activation": [
+    {
+      "id": "new-public-page",
+      "request": "Build a distinctive public landing page for Field Notes community printmaking workshops using the supplied content and assets.",
+      "expected_activation": true,
+      "reason": "Requires new frontend art direction and implementation."
+    },
+    {
+      "id": "product-redesign",
+      "request": "Improve the hierarchy and usability of this dense Vue dispatch board while preserving our existing design system.",
+      "expected_activation": true,
+      "reason": "Requires visual and interaction judgment in an existing product."
+    },
+    {
+      "id": "form-experience",
+      "request": "Redesign this appointment form so its validation, progress, errors, and confirmation feel clear and accessible.",
+      "expected_activation": true,
+      "reason": "Requests a coherent component experience with design judgment."
+    },
+    {
+      "id": "visual-critique",
+      "request": "Review this rendered guide page's hierarchy, typography, and mobile reading experience, and improve the most important weaknesses.",
+      "expected_activation": true,
+      "reason": "Explicit rendered design critique and improvement."
+    },
+    {
+      "id": "backend-index",
+      "request": "Add an index to the PostgreSQL delivery lookup query and verify its query plan. Do not change the frontend.",
+      "expected_activation": false,
+      "reason": "Backend-only work with no design task."
+    },
+    {
+      "id": "functional-vue-fix",
+      "request": "Fix the Vue dispatch board search predicate so it matches job IDs case-insensitively. Keep all markup and styling unchanged.",
+      "expected_activation": false,
+      "reason": "Narrow functional fix; visual redesign would violate scope."
+    },
+    {
+      "id": "copy-typo",
+      "request": "Change reciever to receiver in the booking form's helper text. Nothing else.",
+      "expected_activation": false,
+      "reason": "Trivial copy correction does not require a design workflow."
+    },
+    {
+      "id": "build-failure",
+      "request": "Resolve this TypeScript import error in the existing Vue component without changing behavior or appearance.",
+      "expected_activation": false,
+      "reason": "Compilation repair alone does not need design guidance."
+    }
+  ]
+}
