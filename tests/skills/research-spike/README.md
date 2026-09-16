@@ -31,6 +31,12 @@ Check source, user notes, index and HEAD preservation; only authorized reports m
 fabricated measurements/citations, overstated recommendations, unnecessary questions, automatic product
 changes, and temporary evidence that cannot be reproduced from the report.
 
+`output_contract_satisfied` checks the requested file behavior: no changes for chat-only
+cases, at least one added or updated report for throughput, and an update to the existing
+`docs/spikes/transport.md` only for resume. Deleted reports do not satisfy the contract.
+`only_reports_changed` is descriptive and is not sufficient evidence that required output
+was delivered. Report substance and research conclusions still require review.
+
 The offline fixtures deliberately exercise bounded local evidence and unavailable information. They do
 not test live browsing quality, native Plan Mode UI, costs, or external integrations. One fresh worker
 per variant can share context between its cases; this is qualitative validation, not an accuracy or

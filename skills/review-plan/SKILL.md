@@ -1,6 +1,6 @@
 ---
 name: review-plan
-description: Review an implementation against an existing plan or BRD, checking acceptance coverage, regressions, and completion claims. Use for requests to verify whether delivered work fulfills its plan. Requests to draft or critique a plan alone, ordinary code reviews without a plan, and implementation requests retain their intended workflows.
+description: 'Review delivered work against an existing plan or BRD for acceptance coverage, regressions, and completion claims, excluding plan-only critiques, ordinary code reviews without a plan, and implementation requests.'
 ---
 
 # Review Plan

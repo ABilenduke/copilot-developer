@@ -50,6 +50,14 @@ skills and verify that only the expected fixture skill paths remain. This catche
 global Cylinder and other competing design authorities. It fails on an unknown
 catalog format or extra visible skill.
 
+Every isolation check also makes a bounded, billable catalog-only model call with
+the same `codex exec` flags, model/settings, workspace, and disable list used for
+implementation. It asks for the catalog paths from the supplied context without
+providing the expected answer or allowing tool use in the prompt. Missing, malformed,
+or mismatched answers block execution. The command, response, timing, and usage
+events are retained under `exec-catalog/`. This is a model-reported cross-check of
+the actual execution path, not proof of filesystem confinement or of future tool reads.
+
 The disable list also enumerates skill files in the normal home and system roots.
 This matters because `debug` honors globally disabled skills while
 `exec --ignore-user-config` may re-enable them; discovery output alone is
@@ -123,8 +131,11 @@ renderer separately verifies ownership through a unique content sentinel before
 capturing screenshots.
 
 The model is explicitly selected at preparation; it is never silently substituted.
-The 720-second wall limit applies equally to agent execution. Dependency setup
-and post-run validation have separate equal limits and retained logs. The CLI
+The 720-second wall limit applies equally to implementation execution. Each
+dependency setup command has 180 seconds; each post-run validation command has
+120 seconds. Catalog-only exec probes and behavior-probe subprocesses each have
+120 seconds. These separate budgets are identical across configurations, and their
+commands and timings are retained separately from implementation timing. The CLI
 does not expose a verified total-token cap here: report actual observed token
 usage, rather than claiming a token-controlled experiment. Parallelism can affect
 latency; use the same worker count across both stages.
@@ -146,6 +157,11 @@ screenshots and operate each flow described in the private scenarios as well.
 against each served result and saves their raw observations privately. A selector
 that cannot locate a redesigned control requires manual review, not an invented
 pass. Inspect these records before assigning technical scores.
+Server, screenshot, and behavior-probe execution errors retain `render-error.json`
+and cause a nonzero render exit after cleanup. A completed behavior report can still
+contain failing or manual-review checks; process completion never means quality acceptance.
+Booking checks require observed validation feedback and visible announced/focused
+service-error feedback with a usable retry action, without prescribing error wording.
 
 For automated accessibility evidence, add `--axe-script /absolute/path/to/axe.min.js`
 alongside `--verify-behavior`. Use the same pinned script across every condition.
@@ -236,3 +252,15 @@ These tests protect the runner's catalog parsing, private-rubric separation,
 complete condition matrix, free/distinct actor ports and legacy port handling,
 blocking occupied ports before model spend, frozen inputs, and observed
 usage accounting. They do not evaluate aesthetic quality.
+
+Run the Chromium regressions for actual validation, retry, alternate error wording,
+hidden errors, and stale progress states separately:
+
+```bash
+python3 -B tests/skills/frontend-craft/browser_regressions.py -v
+python3 -B -m unittest discover -s tests/skills -p 'test_workflow_evaluators.py' -v
+```
+
+The second command covers workflow evaluator path guards under optimized Python,
+symlink escapes, and scenario-specific research output requirements. Neither suite
+launches comparison agents; catalog capability probes are a separate billable check.

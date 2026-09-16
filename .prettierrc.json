@@ -1,5 +1,11 @@
 {
   "singleQuote": false,
   "printWidth": 100,
-  "trailingComma": "es5"
+  "trailingComma": "es5",
+  "overrides": [
+    {
+      "files": "skills/*/SKILL.md",
+      "options": { "singleQuote": true }
+    }
+  ]
 }

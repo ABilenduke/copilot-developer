@@ -1,10 +1,6 @@
 ---
 name: brd-plan
-description: >-
-  Plan software changes, discover requirements, and create or revise a BRD with
-  delivery steps. Use for planning requests, ambiguous requirements, business
-  requirements documents, and implementation-plan revisions. Not for direct
-  implementation, routine debugging, code review, or a plan mentioned only as context.
+description: 'Plan software changes and create or revise a BRD for planning, requirements discovery, or implementation-plan revisions, excluding direct implementation, routine debugging, code review, and plans mentioned only as context.'
 ---
 
 # BRD Plan

@@ -263,13 +263,87 @@ class Verifier:
         if not self.page.evaluate("Boolean(window.archiveApi?.reserve)"):
             raise ManualReview("Public archiveApi.reserve was not available for non-invasive request counting.")
         self.page.evaluate("""() => {
-            window.__archiveProbe = {calls: 0};
+            window.__archiveProbe = {calls: 0, pending: 0, failures: 0};
             const reserve = window.archiveApi.reserve;
-            window.archiveApi.reserve = function(...args) {
+            window.archiveApi.reserve = async function(...args) {
                 window.__archiveProbe.calls++;
-                return Reflect.apply(reserve, this, args);
+                window.__archiveProbe.pending++;
+                try { return await Reflect.apply(reserve, this, args); }
+                catch (error) { window.__archiveProbe.failures++; throw error; }
+                finally { window.__archiveProbe.pending--; }
             };
         }""")
+
+    def feedback(self):
+        """Observe visible announcements/focus and actual field-error associations."""
+        return self.page.evaluate("""() => {
+            const visible = el => el && el.getClientRects().length > 0 &&
+                getComputedStyle(el).visibility !== 'hidden';
+            const text = el => visible(el) ? el.innerText.trim() : '';
+            const active = document.activeElement;
+            const regions = [...document.querySelectorAll(
+                '[role="alert"], [role="status"], [aria-live]:not([aria-live="off"]), [tabindex]:focus'
+            )].filter(el => text(el)).map(el => ({id: el.id, text: text(el)}));
+            const controls = [...document.querySelectorAll('input, select, textarea')]
+                .filter(visible).map(el => ({
+                    key: [...document.querySelectorAll('input, select, textarea')].indexOf(el),
+                    name: el.name, id: el.id, focused: el === active,
+                    nativeInvalid: !!el.validity && !el.validity.valid,
+                    nativeMessage: el.validationMessage || '',
+                    nativeValidationEnabled: !!el.willValidate && !el.form?.noValidate,
+                    ariaInvalid: el.getAttribute('aria-invalid') === 'true',
+                    associated: ['aria-describedby', 'aria-errormessage'].flatMap(attr =>
+                        (el.getAttribute(attr) || '').split(/\\s+/).filter(Boolean)
+                            .map(id => ({id, text: text(document.getElementById(id))})))
+                        .filter(item => item.text),
+                    focusedSummaryLink: !!el.id && !!active && active !== document.body &&
+                        [...active.querySelectorAll('a[href]')].some(a => a.getAttribute('href') === '#' + el.id)
+                }));
+            return {regions, controls};
+        }""")
+
+    def validation_feedback(self, before, kind):
+        observed = self.feedback()
+        old_regions = {item['text'] for item in before['regions']}
+        announced = any(item['text'] not in old_regions for item in observed['regions'])
+        expected = {'empty': {'name', 'email', 'date', 'purpose', 'agreement'},
+                    'whitespace': {'name', 'purpose'}, 'email': {'email'}}[kind]
+        labels = {'name': 'name', 'email': 'email', 'date': 'appointment|date',
+                  'purpose': 'research|purpose', 'agreement': 'understand|agree'}
+        expected_keys = {self.field(name, labels[name]).evaluate(
+            "el => [...document.querySelectorAll('input, select, textarea')].indexOf(el)"
+        ) for name in expected}
+        old_associations = {item['text'] for control in before['controls'] for item in control['associated']}
+        supported = []
+        for control in observed['controls']:
+            if control['key'] not in expected_keys:
+                continue
+            associated = any(item['text'] not in old_associations for item in control['associated'])
+            native = (control['nativeInvalid'] and control['nativeMessage'] and control['focused']
+                      and control['nativeValidationEnabled']
+                      and self.submit().get_attribute('formnovalidate') is None)
+            custom = associated or (announced and (
+                control['ariaInvalid'] or control['focusedSummaryLink']))
+            if native or custom:
+                supported.append(control['name'])
+        assert supported, f"Submission blocked without observed validation feedback for {kind}: {observed}"
+        return {"fields_with_feedback": supported, "observed": observed}
+
+    def service_failure_feedback(self, before, pending, first_failure=True):
+        assert eventually(lambda: self.page.evaluate(
+            "window.__archiveProbe.failures > 0 && window.__archiveProbe.pending === 0"
+        )), "Expected API failure did not settle."
+        old_text = {item['text'] for item in before['regions']}
+        pending_text = {item['text'] for item in pending['regions']} if first_failure else set()
+
+        def error_regions():
+            return [item for item in self.feedback()['regions']
+                    if item['text'] not in old_text and item['text'] not in pending_text]
+
+        assert eventually(error_regions), "Service failed without new visible announced/focused feedback."
+        button = self.submit()
+        assert button.is_enabled() and button.get_attribute('aria-disabled') != 'true', "Retry action remains disabled after failure."
+        return error_regions()
 
     def booking_values(self, email="alex@example.test"):
         values = {"name": "Alex Reed", "email": email, "purpose": "Family research", "access": "Adjustable desk"}
@@ -292,10 +366,12 @@ class Verifier:
                     self.field("purpose", "research|purpose").fill("   ")
                 else:
                     self.field("email", "email").fill("bad-address")
+            before = self.feedback()
             self.submit().click()
             self.page.wait_for_timeout(200)
             assert calls() == 0, f"{kind} input reached archiveApi.reserve ({calls()} calls)."
-            return {"api_calls": calls(), "invalid_input": kind}
+            return {"api_calls": calls(), "invalid_input": kind,
+                    "feedback": self.validation_feedback(before, kind)}
 
         def pending():
             self.instrument_archive()
@@ -312,28 +388,33 @@ class Verifier:
         def retry():
             self.instrument_archive()
             values = self.booking_values("retry@example.test")
+            before = self.feedback()
             self.submit().click()
-            assert eventually(lambda: "could not send" in self.page.locator("body").inner_text().lower()), "Expected first-request error was not visibly communicated."
+            pending_feedback = self.feedback()
+            error_feedback = self.service_failure_feedback(before, pending_feedback)
             actual = {name: self.field(name, name if name != "purpose" else "research|purpose").input_value() for name in values}
             assert actual == values, f"Entered values changed after failure: {actual}"
             assert self.field("agreement", "understand|agree").is_checked(), "Agreement lost after failure."
             self.submit().click()
             assert eventually(lambda: "NB-2046" in self.page.locator("body").inner_text()), "Retry did not visibly confirm NB-2046."
             assert calls() == 2, f"Expected two deliberate requests, observed {calls()}."
-            return {"api_calls": calls(), "preserved_values": actual, "reference": "NB-2046"}
+            return {"api_calls": calls(), "preserved_values": actual, "reference": "NB-2046",
+                    "error_feedback": error_feedback}
 
         def persistent():
             self.instrument_archive()
             self.booking_values("unavailable@example.test")
+            before = self.feedback()
+            failures = []
             for _ in range(2):
                 previous = calls()
                 self.submit().click()
+                pending_feedback = self.feedback()
                 assert eventually(lambda: calls() == previous + 1), "Retry did not reach the API."
-                self.page.wait_for_timeout(1000)
-                assert "unavailable" in self.page.locator("body").inner_text().lower(), "Persistent service failure was not communicated."
+                failures.append(self.service_failure_feedback(before, pending_feedback, first_failure=previous == 0))
                 assert self.field("email", "email").input_value() == "unavailable@example.test", "Input lost after service failure."
             assert "NB-2046" not in self.page.locator("body").inner_text(), "Persistent failure incorrectly showed success."
-            return {"api_calls": calls(), "success_fabricated": False}
+            return {"api_calls": calls(), "success_fabricated": False, "error_feedback": failures}
 
         def revise():
             self.instrument_archive()

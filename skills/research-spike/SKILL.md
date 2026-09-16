@@ -1,6 +1,6 @@
 ---
 name: research-spike
-description: Investigate a focused technical uncertainty before implementation using repository evidence, authoritative sources, and bounded experiments. Use for feasibility spikes, technical option comparisons, or research that unblocks a development decision. General factual questions, bug-fix requests, full implementation planning, and research-memory management retain their intended workflows.
+description: 'Investigate focused technical uncertainty before implementation through repository evidence, authoritative sources, and bounded experiments for feasibility or option decisions, excluding general factual questions, bug fixes, full implementation planning, and research-memory management.'
 ---
 
 # Research Spike

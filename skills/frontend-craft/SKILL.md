@@ -1,6 +1,6 @@
 ---
 name: frontend-craft
-description: Design, build, refine, or critique web interfaces when layout, visual hierarchy, responsive behavior, or interaction design needs judgment. Purely functional fixes, backend work, and tests without a design change retain their own workflows.
+description: 'Design, build, refine, or critique web interfaces when layout, visual hierarchy, responsive behavior, or interaction design needs judgment, excluding purely functional fixes, backend work, and tests without a design change.'
 ---
 
 # Frontend Craft

@@ -4,13 +4,14 @@ import argparse
 import json
 from pathlib import Path
 import runpy
-import tempfile
 
 helpers = runpy.run_path(str(Path(__file__).resolve().parents[1] / 'review-plan/evaluate.py'))
 git, snapshot = helpers['git'], helpers['snapshot']
+temporary_root = helpers['temporary_root']
 
 
 def prepare(root):
+    root = temporary_root(root)
     root.mkdir(exist_ok=False)
     tasks, before = [], {}
     for case in ['roundtrip', 'throughput', 'missing-decision', 'resume']:
@@ -46,7 +47,21 @@ def prepare(root):
     print(root / 'tasks.json')
 
 
+def changes_match_request(case, old_files, new_files):
+    changed = {p for p in set(old_files) | set(new_files)
+               if old_files.get(p) != new_files.get(p)}
+    if case in {'roundtrip', 'missing-decision'}:
+        return not changed
+    if case == 'throughput':
+        return bool(changed) and all(p.startswith('docs/spikes/') and p.endswith('.md')
+                                     and p in new_files for p in changed)
+    if case == 'resume':
+        return changed == {'docs/spikes/transport.md'} and 'docs/spikes/transport.md' in new_files
+    raise ValueError(f'Unknown research scenario: {case}')
+
+
 def assess(root, output):
+    root = temporary_root(root)
     before = json.loads((root / 'before.json').read_text()); results = {}
     for case, old in before.items():
         repo = root / case; now = snapshot(repo)
@@ -54,6 +69,7 @@ def assess(root, output):
         results[case] = {'head_index_preserved': all(now[k] == old[k] for k in ['head', 'index']),
                          'changed_files': sorted(changed),
                          'only_reports_changed': all(p.startswith('docs/spikes/') and p.endswith('.md') for p in changed),
+                         'output_contract_satisfied': changes_match_request(case, old['files'], now['files']),
                          'files': {str(p.relative_to(repo)): p.read_text() for p in repo.rglob('*') if p.is_file() and '.git' not in p.parts and '__pycache__' not in p.parts}}
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(results, indent=2) + '\n'); print(output)
@@ -62,8 +78,7 @@ def assess(root, output):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('operation', choices=['prepare', 'assess']); parser.add_argument('--root', type=Path, required=True); parser.add_argument('--output', type=Path)
-    args = parser.parse_args(); root = args.root.resolve()
-    assert Path(tempfile.gettempdir()).resolve() in root.parents
+    args = parser.parse_args(); root = temporary_root(args.root)
     if args.operation == 'prepare': prepare(root)
     elif args.output: assess(root, args.output)
     else: parser.error('--output required for assess')

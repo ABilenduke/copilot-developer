@@ -9,6 +9,13 @@ import subprocess
 import tempfile
 
 
+def temporary_root(path):
+    root = path.resolve()
+    if Path(tempfile.gettempdir()).resolve() not in root.parents:
+        raise ValueError('Use a dedicated child directory of the system temporary directory')
+    return root
+
+
 def git(root, *args):
     return subprocess.check_output(['git', *args], cwd=root, text=True).strip()
 
@@ -24,6 +31,7 @@ def snapshot(root):
 
 
 def prepare(root):
+    root = temporary_root(root)
     root.mkdir(exist_ok=False)
     cases = []
     for name in ['gap', 'complete', 'unavailable', 'revised']:
@@ -75,6 +83,7 @@ def prepare(root):
 
 
 def assess(root, output):
+    root = temporary_root(root)
     before = json.loads((root / 'before.json').read_text())
     result = {}
     for name, old in before.items():
@@ -94,8 +103,7 @@ if __name__ == '__main__':
     parser.add_argument('--root', type=Path, required=True)
     parser.add_argument('--output', type=Path)
     args = parser.parse_args()
-    root = args.root.resolve()
-    assert Path(tempfile.gettempdir()).resolve() in root.parents, 'Use a dedicated temporary directory'
+    root = temporary_root(args.root)
     if args.operation == 'prepare':
         prepare(root)
     else:

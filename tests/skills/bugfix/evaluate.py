@@ -5,14 +5,15 @@ import json
 from pathlib import Path
 import runpy
 import subprocess
-import tempfile
 
-# Reuse only deterministic Git/snapshot helpers from the adjacent review fixture driver.
+# Reuse deterministic Git/snapshot and temporary-root helpers.
 helpers = runpy.run_path(str(Path(__file__).resolve().parents[1] / 'review-plan/evaluate.py'))
 git, snapshot = helpers['git'], helpers['snapshot']
+temporary_root = helpers['temporary_root']
 
 
 def prepare(root):
+    root = temporary_root(root)
     root.mkdir(exist_ok=False)
     tasks, before = [], {}
     for case in ['zero-retries', 'unknown-contract', 'missing-check', 'diagnosis-only', 'already-fixed']:
@@ -50,6 +51,7 @@ def prepare(root):
 
 
 def assess(root,output):
+    root = temporary_root(root)
     before=json.loads((root/'before.json').read_text()); results={}
     for case,old in before.items():
         repo=root/case; now=snapshot(repo)
@@ -64,8 +66,7 @@ def assess(root,output):
 if __name__=='__main__':
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('operation',choices=['prepare','assess']); parser.add_argument('--root',type=Path,required=True); parser.add_argument('--output',type=Path)
-    args=parser.parse_args(); root=args.root.resolve()
-    assert Path(tempfile.gettempdir()).resolve() in root.parents
+    args=parser.parse_args(); root=temporary_root(args.root)
     if args.operation=='prepare': prepare(root)
     elif args.output: assess(root,args.output)
     else: parser.error('--output required for assess')

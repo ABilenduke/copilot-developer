@@ -9,8 +9,9 @@ from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+import types
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 spec = importlib.util.spec_from_file_location("evaluate", Path(__file__).with_name("evaluate.py"))
 evaluate = importlib.util.module_from_spec(spec)
@@ -41,11 +42,13 @@ class ComparisonIntegrity(unittest.TestCase):
             output = Path(directory) / "output"
             commands = []
 
-            def fake_capture(command, cwd, destination, timeout):
+            def fake_capture(command, cwd, destination, timeout, prompt=None):
                 commands.append(command)
                 destination.mkdir(parents=True)
                 # Debug sees no skills because home config already disabled them.
                 (destination / "stdout.txt").write_text("[]")
+                if "exec" in command:
+                    Path(command[command.index("-o") + 1]).write_text("[]")
                 return {"exit_code": 0}
 
             with patch.object(evaluate, "capture", fake_capture), patch.object(
@@ -53,6 +56,74 @@ class ComparisonIntegrity(unittest.TestCase):
                 disabled = evaluate.check_isolation(workspace, {"model": "test", "reasoning": "low"}, output)
             self.assertIn("/host/cylinder/SKILL.md", disabled)
             self.assertIn("/host/cylinder/SKILL.md", " ".join(commands[-1]))
+            self.assertIn("--ignore-user-config", commands[-1])
+            self.assertIn("--ignore-rules", commands[-1])
+
+    def test_actual_exec_catalog_can_reject_a_debug_pass(self):
+        with tempfile.TemporaryDirectory() as directory:
+            workspace = Path(directory)
+
+            def fake_capture(command, cwd, destination, timeout, prompt=None):
+                destination.mkdir(parents=True)
+                (destination / "stdout.txt").write_text("[]")
+                if "exec" in command:
+                    Path(command[command.index("-o") + 1]).write_text('["/hidden/design/SKILL.md"]')
+                return {"exit_code": 0}
+
+            with patch.object(evaluate, "capture", fake_capture), patch.object(
+                    evaluate, "host_skill_paths", return_value=set()):
+                with self.assertRaisesRegex(RuntimeError, "Execution-path skill isolation mismatch"):
+                    evaluate.check_isolation(workspace, {"model": "test", "reasoning": "low"}, workspace / "evidence")
+            self.assertFalse(evaluate.read_json(workspace / "evidence/isolation.json")["passed"])
+
+    def test_render_failures_propagate_and_preserve_evidence_after_cleanup(self):
+        for failure in ("startup", "screenshot", "behavior-exit", "behavior-timeout", "behavior-missing-output"):
+            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                workspace = root / "workspace"
+                workspace.mkdir()
+                artifact = root / "artifacts/trial-001"
+                artifact.mkdir(parents=True)
+                evaluate.write_json(artifact / "result.json", {"status": "completed"})
+                trial = {"id": "trial-001", "case": "booking", "workspace": "workspace",
+                         "serve": ["server", "{port}"], "path": "/", "viewports": [{"width": 390, "height": 844}]}
+                args = argparse.Namespace(root=root, axe_script=None, port_start=18000, verify_behavior=True)
+                playwright = MagicMock()
+                browser = playwright.chromium.launch.return_value
+                page = browser.new_page.return_value
+                page.title.return_value = "Fixture"
+                page.evaluate.return_value = {}
+                if failure == "screenshot":
+                    page.screenshot.side_effect = RuntimeError("Screenshot failed")
+                context = MagicMock()
+                context.__enter__.return_value = playwright
+                module = types.SimpleNamespace(sync_playwright=lambda: context)
+                server = MagicMock()
+                server.poll.return_value = None
+                response = MagicMock()
+                response.status = 200
+                response.read.side_effect = lambda: next(workspace.glob('frontend-craft-probe-*.txt')).read_bytes()
+                response.__enter__.return_value = response
+                behavior = {"exit_code": 2 if failure == "behavior-exit" else 0,
+                            "timed_out": failure == "behavior-timeout"}
+                with patch.dict("sys.modules", {"playwright.sync_api": module}), patch.object(
+                        evaluate, "load_manifest", return_value=(root, {})), patch.object(
+                        evaluate, "select_trials", return_value=[trial]), patch.object(
+                        evaluate.socket, "socket") as socket_mock, patch.object(
+                        evaluate.subprocess, "Popen", return_value=server) as popen, patch.object(
+                        evaluate.urllib.request, "urlopen", return_value=response), patch.object(
+                        evaluate.os, "killpg") as kill, patch.object(evaluate, "capture", return_value=behavior):
+                    socket_mock.return_value.__enter__.return_value.connect_ex.return_value = 111
+                    if failure == "startup":
+                        popen.side_effect = OSError("Server executable missing")
+                    with self.assertRaises((RuntimeError, OSError)):
+                        evaluate.render(args)
+                    self.assertTrue((root / "blind/booking/trial-001/render-error.json").exists())
+                    self.assertEqual(list(workspace.glob('frontend-craft-probe-*.txt')), [])
+                    browser.close.assert_called_once()
+                    if failure != "startup":
+                        kill.assert_called_once()
+                        server.wait.assert_called_once()
 
     def test_matrix_uses_frozen_fixtures_and_keeps_private_rubric_out(self):
         with tempfile.TemporaryDirectory(prefix="frontend-craft-test-") as directory:

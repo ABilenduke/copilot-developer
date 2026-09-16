@@ -149,7 +149,7 @@ def config_args(settings, disabled=()):
         "model": settings["model"],
         "model_reasoning_effort": settings["reasoning"],
         "approval_policy": "never",
-        # No home AGENTS.md or unrelated inherited project instructions.
+        # Exclude file-discovered project documents; host-injected context can remain.
         "project_doc_max_bytes": 0,
         "developer_instructions": "",
         "sandbox_workspace_write.network_access": True,
@@ -205,7 +205,8 @@ def host_skill_paths():
 
 
 def check_isolation(workspace, settings, output):
-    """Disable every discovered external skill, then assert the entire visible catalog."""
+    """Disable host skills and compare debug and actual-exec reported catalogs."""
+    write_json(output / "isolation.json", {"passed": False, "status": "checking"})
     expected = {str(path) for path in (workspace / ".agents/skills").glob("*/SKILL.md")}
     base = ["codex", *config_args(settings), "debug", "prompt-input", "Inspect available skills."]
     first = capture(base, workspace, output / "discovery", 45)
@@ -227,7 +228,25 @@ def check_isolation(workspace, settings, output):
     actual = skill_catalog((output / "verified/stdout.txt").read_text())
     if {entry["path"] for entry in actual} != expected:
         raise RuntimeError(f"Skill isolation mismatch: expected {sorted(expected)}, got {actual}")
-    record = {"passed": True, "disabled": disabled, "visible": actual}
+    # Debug and exec load user configuration differently. Probe the real execution
+    # path too; the expected answer is deliberately absent from the model prompt.
+    final = output / "exec-catalog/final.json"
+    process = capture(exec_command(settings, workspace, disabled, final), workspace,
+                      output / "exec-catalog", 120,
+                      "Return only a JSON array of the absolute SKILL.md paths listed in "
+                      "your Available skills context. Expand skill-root aliases. Include every "
+                      "listed skill, or [] if none are listed. Use only the provided context; "
+                      "do not run tools, inspect the filesystem, or modify files.")
+    if process["exit_code"] or process.get("timed_out") or not final.is_file():
+        raise RuntimeError("Execution-path skill catalog probe failed; inspect exec-catalog evidence.")
+    executed = read_json(final)
+    if not isinstance(executed, list) or any(not isinstance(p, str) for p in executed):
+        raise ValueError("Execution-path skill catalog probe did not return an array of paths.")
+    if set(executed) != expected or len(executed) != len(expected):
+        raise RuntimeError(f"Execution-path skill isolation mismatch: expected {sorted(expected)}, got {executed}")
+    record = {"passed": True, "disabled": disabled, "visible": actual,
+              "exec_reported_paths": executed, "exec_probe": process,
+              "scope": "Debug catalog plus model-reported catalog under actual exec flags; not filesystem confinement."}
     write_json(output / "isolation.json", record)
     return disabled
 
@@ -521,9 +540,10 @@ def render(args):
                 marker_payload = uuid.uuid4().hex
                 marker.write_text(marker_payload)
                 with log_path.open("w") as log:
-                    server = subprocess.Popen(command, cwd=root / trial["workspace"],
-                                              stdout=log, stderr=log, start_new_session=True)
+                    server = None
                     try:
+                        server = subprocess.Popen(command, cwd=root / trial["workspace"],
+                                                  stdout=log, stderr=log, start_new_session=True)
                         url = f"http://127.0.0.1:{port}" + trial["path"]
                         ready = False
                         for _ in range(60):
@@ -565,13 +585,16 @@ def render(args):
                                                     "--case", trial["case"], "--output", str(verification)]
                             if args.axe_script:
                                 verification_command += ["--axe-script", str(args.axe_script.resolve())]
-                            capture(verification_command, root,
-                                    root / "artifacts" / trial["id"] / "behavior-probe", 120)
+                            behavior = capture(verification_command, root,
+                                               root / "artifacts" / trial["id"] / "behavior-probe", 120)
+                            if behavior["exit_code"] or behavior.get("timed_out") or not verification.is_file():
+                                raise RuntimeError("Behavior verification did not complete; inspect behavior-probe evidence.")
                     except Exception as error:
                         write_json(output / "render-error.json", {"error": str(error)})
+                        raise
                     finally:
                         marker.unlink(missing_ok=True)
-                        if server.poll() is None:
+                        if server is not None and server.poll() is None:
                             os.killpg(server.pid, signal.SIGTERM)
                             try:
                                 server.wait(timeout=5)

@@ -1,6 +1,6 @@
 ---
 name: bugfix
-description: Investigate and fix a reported software defect through reproduction, causal diagnosis, and proportionate regression verification. Use when asked to fix broken behavior or a regression. Diagnosis-only requests remain read-only; feature requests and execution of an existing implementation plan retain their intended workflows.
+description: 'Investigate and fix reported defects or regressions through reproduction, causal diagnosis, and proportionate verification, keeping diagnosis-only requests read-only and leaving feature work or existing-plan execution to their own workflows.'
 ---
 
 # Bugfix

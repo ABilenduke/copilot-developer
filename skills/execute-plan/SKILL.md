@@ -1,6 +1,6 @@
 ---
 name: execute-plan
-description: Implement or resume an existing software plan, verify its acceptance criteria, and maintain an execution journal. Use when asked to execute an agreed plan or BRD. Ordinary coding requests without an existing plan and requests only to review or draft a plan retain their intended workflow.
+description: 'Implement or resume an agreed software plan or BRD, verify acceptance criteria, and maintain an execution journal, excluding ordinary coding without an existing plan and requests only to draft or review a plan.'
 ---
 
 # Execute Plan
