@@ -1,0 +1,10 @@
+# Frontend Craft attribution and modifications
+
+The Frontend Craft instructions and references contain rewritten and adapted design guidance from the projects below. They are an independent synthesis, modified on 2026-09-15. Exact revisions, source links, and the scope of adaptations are recorded in [sources.md](../references/sources.md).
+
+- **Impeccable — Paul Bakaus.** Copyright 2025 Paul Bakaus. Apache License 2.0; original [LICENSE](impeccable/LICENSE) and [NOTICE.md](impeccable/NOTICE.md) retained. Adapted mode distinctions, operational-interface principles, and separation of visual critique from technical audit. Impeccable's runtimes, hooks, workflows, aesthetic prohibitions, and reporting requirements are not incorporated wholesale. Its retained upstream notice describes platform references; this package does not include or adapt those iOS/Android files.
+- **Anthropic frontend-design — Anthropic.** Apache License 2.0; original [LICENSE.txt](anthropic-frontend-design/LICENSE.txt) retained. Adapted subject-led composition, typography, purposeful content, and restraint. Rewritten without mandatory aesthetic novelty, fixed palette recipes, or blanket style restrictions. No fonts or software covered by the repository's unrelated third-party dependency notices are included.
+- **Taste Skill — Leonxlnx.** Copyright (c) 2026 Leonxlnx. MIT License; original [LICENSE](taste-skill/LICENSE) retained. Adapted audience, brief, density, and motion considerations. Rewritten without the React/Tailwind architecture defaults, fixed numerical dials, imagery quotas, or aesthetic bans.
+- **Vercel Web Interface Guidelines — Vercel Labs.** Copyright (c) 2025 Vercel Labs. MIT License; original [LICENSE](vercel-web-interface-guidelines/LICENSE) retained. Adapted relevant interaction, form, responsive, content-resilience, and asset checks. Rewritten with framework-neutral semantics and task-specific applicability; accessibility details are checked against W3C guidance.
+
+The bundled upstream license files are unmodified. W3C, MDN, and Google documentation is linked as supporting reference material; their documents are not redistributed here.

@@ -1,0 +1,10 @@
+{
+  "ignorePatterns": ["fixtures/**/dist/", "runs/", "results/"],
+  "overrides": [
+    {
+      "files": ["fixtures/**/*.js"],
+      "env": { "browser": true },
+      "parserOptions": { "sourceType": "module" }
+    }
+  ]
+}
